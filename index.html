@@ -1,233 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dark Tracker</title>
-    <style>
-        :root {
-            --bg-color: #050505;
-            --surface-color: #121212;
-            --border-color: #333;
-            --accent-color: #c9a050; /* Subtle gold */
-            --text-main: #e0e0e0;
-            --text-muted: #888;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>🌌 Dark Notes — No Spoilers | Private Note Taker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+    body {
+      background: linear-gradient(145deg, #0b0e14 0%, #0f121a 100%);
+      font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', 'SF Pro Text', 'Roboto', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
 
-        header {
-            padding: 15px 20px;
-            background: linear-gradient(180deg, #1a1a1a 0%, var(--bg-color) 100%);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* main container — subtle triquetra / dark vibe */
+    .notebook {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(18, 22, 32, 0.85);
+      backdrop-filter: blur(2px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(97, 218, 251, 0.1);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: var(--accent-color);
-        }
+    /* header — atmospheric, no spoilers */
+    .header {
+      padding: 1.5rem 2rem;
+      background: rgba(8, 12, 18, 0.7);
+      border-bottom: 1px solid rgba(72, 187, 200, 0.3);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
 
-        .status {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
+    .title-area h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #e0f2fe, #7dd3fc, #2c7da0);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        /* Table Container for Mobile Scrolling */
-        .table-wrapper {
-            flex-grow: 1;
-            overflow-x: auto;
-            overflow-y: auto;
-            padding: 10px;
-        }
+    .title-area h1 span {
+      font-size: 1.8rem;
+    }
 
-        table {
-            width: 100%;
-            min-width: 600px; /* Forces horizontal scroll on very small screens to keep structure */
-            border-collapse: collapse;
-            background-color: var(--surface-color);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    .spoiler-badge {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      padding: 0.3rem 1rem;
+      border-radius: 60px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #9ab3c7;
+      border-left: 2px solid #2c7da0;
+      display: inline-block;
+      margin-top: 8px;
+    }
 
-        th {
-            background-color: #1a1a1a;
-            color: var(--accent-color);
-            text-align: left;
-            padding: 12px 15px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid var(--border-color);
-        }
+    .spoiler-badge i {
+      font-style: normal;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        td {
-            padding: 0;
-            border-bottom: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-        }
+    .note-stats {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 450;
+      color: #cbd5e6;
+      font-family: monospace;
+      letter-spacing: 0.3px;
+    }
 
-        td:last-child {
-            border-right: none;
-        }
+    /* caution strip — gentle reminder */
+    .caution {
+      background: #11161f;
+      border-left: 4px solid #f5a623;
+      padding: 0.7rem 2rem;
+      font-size: 0.8rem;
+      color: #b9c7d9;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-        /* Seamless Inputs inside Table Cells */
-        input, textarea {
-            width: 100%;
-            box-sizing: border-box;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            padding: 12px 15px;
-            font-size: 16px; /* Prevents iOS auto-zoom */
-            font-family: inherit;
-            outline: none;
-            resize: vertical;
-        }
+    .caution .shield {
+      font-size: 1.2rem;
+    }
 
-        input:focus, textarea:focus {
-            background-color: rgba(201, 160, 80, 0.05);
-        }
+    /* editor area */
+    .editor-area {
+      padding: 1.8rem 2rem 2rem 2rem;
+    }
 
-        .btn-container {
-            padding: 15px;
-            text-align: center;
-            background-color: var(--bg-color);
-            border-top: 1px solid var(--border-color);
-        }
+    textarea {
+      width: 100%;
+      min-height: 380px;
+      background: #0b0f16;
+      border: 1px solid #2a3342;
+      border-radius: 1.5rem;
+      padding: 1.4rem 1.6rem;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #eef4ff;
+      resize: vertical;
+      outline: none;
+      transition: all 0.2s;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+    }
 
-        button {
-            background-color: transparent;
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+    textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.2), inset 0 1px 2px rgba(0,0,0,0.3);
+    }
 
-        button:hover {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-        }
+    /* button panel */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        /* Column widths */
-        .col-subject { width: 25%; }
-        .col-time { width: 20%; }
-        .col-notes { width: 55%; }
-    </style>
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #1e293b;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.15s linear;
+      color: #e2e8f0;
+      border: 1px solid #2d3a4e;
+    }
+
+    .btn-primary {
+      background: #1f4a6e;
+      border-color: #2c7da0;
+      color: white;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary:hover {
+      background: #2c6288;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #3a4a62;
+    }
+
+    .btn-outline:hover {
+      background: #1e2a3a;
+      border-color: #5f7f9e;
+    }
+
+    .btn-warning {
+      background: #2c1a1a;
+      border-color: #b91c1c;
+      color: #ffb3b3;
+    }
+
+    .btn-warning:hover {
+      background: #4a1e1e;
+    }
+
+    .save-indicator {
+      font-size: 0.75rem;
+      background: #0f1219;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    hr {
+      margin: 1rem 0 0.5rem;
+      border-color: #1f2a36;
+    }
+
+    /* footer note: safe, no-spoiler zone */
+    .footer-note {
+      padding: 1rem 2rem 1.5rem;
+      font-size: 0.75rem;
+      color: #6a7c8f;
+      text-align: center;
+      border-top: 1px solid #1a232f;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .safeguard {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    a {
+      color: #7aa9c4;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        flex-direction: column;
+      }
+      .editor-area {
+        padding: 1rem;
+      }
+      .btn-group button {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+      }
+      textarea {
+        min-height: 280px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>THE KNOT</h1>
-        <div class="status" id="saveStatus">All changes saved</div>
-    </header>
-
-    <div class="table-wrapper">
-        <table id="notesTable">
-            <thead>
-                <tr>
-                    <th class="col-subject">Subject / Name</th>
-                    <th class="col-time">Time Period</th>
-                    <th class="col-notes">Connections & Clues</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
+<div class="notebook">
+  <div class="header">
+    <div class="title-area">
+      <h1>
+        <span>🌀</span> DARK • personal log
+      </h1>
+      <div class="spoiler-badge">
+        <i>🛡️ ZERO SPOILER ZONE — write freely, reflect safely</i>
+      </div>
     </div>
-
-    <div class="btn-container">
-        <button onclick="addNewRow()">+ Add New Entry</button>
+    <div class="note-stats" id="statsDisplay">
+      📝 0 characters · 0 lines
     </div>
+  </div>
 
-    <script>
-        const tableBody = document.getElementById('tableBody');
-        const saveStatus = document.getElementById('saveStatus');
-        let saveTimeout;
+  <div class="caution">
+    <div class="shield">⚠️</div>
+    <div>
+      <strong>No-spoiler note space</strong> — Everything you write stays in your browser.
+      Use this as a private journal for theories, character reflections, or episode reactions.
+      Nothing is uploaded or shared.
+    </div>
+  </div>
 
-        // Load data from LocalStorage
-        function loadTable() {
-            const savedData = localStorage.getItem('dark_table_notes');
-            if (savedData) {
-                const rows = JSON.parse(savedData);
-                rows.forEach(row => createRowHTML(row.subject, row.time, row.notes));
-            } else {
-                // Create 3 empty rows by default for new users
-                for(let i=0; i<3; i++) createRowHTML('', '', '');
-            }
+  <div class="editor-area">
+    <textarea id="darkNotesArea" placeholder="✍️  Write about DARK without worrying about spoilers...&#10;&#10;Examples:&#10;• 'The opening cave imagery gives me chills — reminds me of the knot symbolism.'&#10;• 'Why does Noah feel both ominous and tragic? Need to track his appearances.'&#10;• 'Episode 3: the way light flickers across the timeline, feels like a loop.'&#10;• 'My theory about the origin world — keep this between seasons.'&#10;&#10;🔒 Local storage auto-saves every few seconds. Your notes, your rules."></textarea>
+
+    <div class="action-bar">
+      <div class="btn-group">
+        <button class="btn btn-primary" id="saveNowBtn">
+          💾 Save & lock notes
+        </button>
+        <button class="btn btn-outline" id="copyNotesBtn">
+          📋 Copy to clipboard
+        </button>
+        <button class="btn btn-outline" id="exportTxtBtn">
+          ⬇️ Export as .txt
+        </button>
+        <button class="btn btn-warning" id="clearAllBtn">
+          🧹 Clear all notes
+        </button>
+      </div>
+      <div class="save-indicator" id="saveIndicator">
+        ● All changes saved locally
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <div class="safeguard">
+      🌙 <strong>Dark inspired • no spoilers ever</strong> — this tool doesn't generate plot, no AI inference.
+      Just your raw thoughts.
+    </div>
+    <div>
+      🧩 data stays in <strong>localStorage</strong> | private & ephemeral
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // DOM elements
+    const textarea = document.getElementById('darkNotesArea');
+    const statsSpan = document.getElementById('statsDisplay');
+    const saveIndicator = document.getElementById('saveIndicator');
+    const saveBtn = document.getElementById('saveNowBtn');
+    const copyBtn = document.getElementById('copyNotesBtn');
+    const exportBtn = document.getElementById('exportTxtBtn');
+    const clearBtn = document.getElementById('clearAllBtn');
+
+    // Storage key
+    const STORAGE_KEY = 'dark_no_spoiler_notes';
+
+    // Helper: update stats (characters + lines)
+    function updateStats() {
+      const content = textarea.value;
+      const charCount = content.length;
+      const linesCount = content.split(/\r?\n/).filter(line => line.trim().length > 0 || line === "").length;
+      const effectiveLines = content === "" ? 0 : linesCount;
+      statsSpan.innerHTML = `📝 ${charCount} character${charCount !== 1 ? 's' : ''} · ${effectiveLines} line${effectiveLines !== 1 ? 's' : ''}`;
+    }
+
+    // Save current textarea content to localStorage with visual feedback
+    function saveToLocalStorage(showToastEffect = true) {
+      const currentContent = textarea.value;
+      localStorage.setItem(STORAGE_KEY, currentContent);
+      
+      if (showToastEffect) {
+        // subtle flash / indicator update
+        saveIndicator.innerHTML = '✓ Saved just now';
+        saveIndicator.style.opacity = '1';
+        setTimeout(() => {
+          if (saveIndicator.innerHTML === '✓ Saved just now') {
+            saveIndicator.innerHTML = '● All changes saved locally';
+          }
+        }, 1800);
+      } else {
+        saveIndicator.innerHTML = '● All changes saved locally';
+      }
+      updateStats();
+    }
+
+    // Load saved notes from localStorage on startup
+    function loadFromLocalStorage() {
+      const savedNotes = localStorage.getItem(STORAGE_KEY);
+      if (savedNotes !== null) {
+        textarea.value = savedNotes;
+      } else {
+        // optional default gentle placeholder (no spoilers, just ambiance)
+        textarea.value = '';
+      }
+      updateStats();
+      saveIndicator.innerHTML = '● All changes saved locally';
+    }
+
+    // Debounced auto-save while typing (every 1 second after user stops)
+    let autoSaveTimer;
+    function handleAutoSave() {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => {
+        saveToLocalStorage(false);   // silent auto-save without overriding toast
+        updateStats();
+      }, 800);
+    }
+
+    // Event listeners for typing & changes
+    textarea.addEventListener('input', () => {
+      updateStats();
+      handleAutoSave();
+    });
+
+    // Manual save button
+    saveBtn.addEventListener('click', () => {
+      saveToLocalStorage(true);
+      // also provide a quick haptic feedback (no spoiler alert)
+      textarea.style.transition = '0.1s';
+      textarea.style.boxShadow = '0 0 0 2px #2c7da0';
+      setTimeout(() => {
+        textarea.style.boxShadow = '';
+      }, 200);
+    });
+
+    // Copy to clipboard (with plain text, no extra markup)
+    copyBtn.addEventListener('click', async () => {
+      const content = textarea.value;
+      if (!content.trim()) {
+        // gentle feedback
+        saveIndicator.innerHTML = '⚠️ Nothing to copy — notes are empty';
+        setTimeout(() => {
+          saveIndicator.innerHTML = '● All changes saved locally';
+        }, 1500);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(content);
+        saveIndicator.innerHTML = '📋 Copied to clipboard!';
+        setTimeout(() => {
+          if (saveIndicator.innerHTML === '📋 Copied to clipboard!') {
+            saveIndicator.innerHTML = '● All changes saved locally';
+          }
+        }, 1800);
+      } catch (err) {
+        console.warn('Clipboard error:', err);
+        saveIndicator.innerHTML = '❌ Could not copy, select manually';
+        setTimeout(() => {
+          saveIndicator.innerHTML = '● All changes saved locally';
+        }, 1500);
+      }
+    });
+
+    // Export as .txt file (filename: Dark_Notes_YYYYMMDD_HHMMSS.txt)
+    exportBtn.addEventListener('click', () => {
+      const content = textarea.value;
+      if (!content.trim()) {
+        saveIndicator.innerHTML = '📄 No content to export — write something first';
+        setTimeout(() => {
+          saveIndicator.innerHTML = '● All changes saved locally';
+        }, 1500);
+        return;
+      }
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+      const filename = `Dark_Notes_${timestamp}.txt`;
+      const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      saveIndicator.innerHTML = `⬇️ Exported as ${filename}`;
+      setTimeout(() => {
+        if (saveIndicator.innerHTML.includes('Exported')) {
+          saveIndicator.innerHTML = '● All changes saved locally';
         }
+      }, 2200);
+    });
 
-        // Save entire table to LocalStorage
-        function saveTable() {
-            saveStatus.innerText = "Saving...";
-            clearTimeout(saveTimeout);
-            
-            const rows = [];
-            document.querySelectorAll('#tableBody tr').forEach(tr => {
-                const inputs = tr.querySelectorAll('.cell-input');
-                rows.push({
-                    subject: inputs[0].value,
-                    time: inputs[1].value,
-                    notes: inputs[2].value
-                });
-            });
+    // Clear all notes with confirmation (to avoid accidental loss)
+    clearBtn.addEventListener('click', () => {
+      const currentLen = textarea.value.length;
+      if (currentLen === 0) {
+        saveIndicator.innerHTML = '✨ Notes already empty';
+        setTimeout(() => {
+          saveIndicator.innerHTML = '● All changes saved locally';
+        }, 1200);
+        return;
+      }
+      const userConfirmed = confirm('⚠️ Clear all Dark notes? This action is permanent (no undo). Your notes will be erased from browser storage.');
+      if (userConfirmed) {
+        textarea.value = '';
+        localStorage.removeItem(STORAGE_KEY);
+        updateStats();
+        saveIndicator.innerHTML = '🗑️ Notes cleared safely';
+        setTimeout(() => {
+          saveIndicator.innerHTML = '● All changes saved locally';
+        }, 1800);
+        // focus back to textarea for new thoughts
+        textarea.focus();
+      } else {
+        saveIndicator.innerHTML = '↺ Clear cancelled — notes untouched';
+        setTimeout(() => {
+          saveIndicator.innerHTML = '● All changes saved locally';
+        }, 1500);
+      }
+    });
 
-            localStorage.setItem('dark_table_notes', JSON.stringify(rows));
-            
-            saveTimeout = setTimeout(() => {
-                saveStatus.innerText = "All changes saved";
-            }, 500);
-        }
+    // Extra safety: before page unload, ensure latest content is saved
+    window.addEventListener('beforeunload', () => {
+      // final sync: save whatever is in textarea (just in case)
+      const currentValue = textarea.value;
+      localStorage.setItem(STORAGE_KEY, currentValue);
+    });
 
-        // Generate HTML for a row
-        function createRowHTML(subjectVal, timeVal, notesVal) {
-            const tr = document.createElement('tr');
-            
-            tr.innerHTML = `
-                <td><input type="text" class="cell-input" placeholder="e.g. Jonas" value="${subjectVal}"></td>
-                <td><input type="text" class="cell-input" placeholder="e.g. 2019" value="${timeVal}"></td>
-                <td><textarea class="cell-input" rows="2" placeholder="Notes...">${notesVal}</textarea></td>
-            `;
-            
-            // Add event listeners to new inputs so they auto-save when typed in
-            tr.querySelectorAll('.cell-input').forEach(input => {
-                input.addEventListener('input', saveTable);
-            });
+    // also listen for visibility change (save on tab hide)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        localStorage.setItem(STORAGE_KEY, textarea.value);
+      }
+    });
 
-            tableBody.appendChild(tr);
-        }
-
-        // Button action
-        function addNewRow() {
-            createRowHTML('', '', '');
-            saveTable();
-            // Scroll to bottom
-            const wrapper = document.querySelector('.table-wrapper');
-            wrapper.scrollTop = wrapper.scrollHeight;
-        }
-
-        // Initialize
-        loadTable();
-    </script>
-
+    // initialize: load data, set stats, focus optionally
+    loadFromLocalStorage();
+    textarea.focus();
+    
+    // Additional safeguard: if the user clicks away but we haven't saved in a while,
+    // we already auto-save on input. but let's add a click-outside safety? not needed
+    // update stats after load
+    updateStats();
+  })();
+</script>
 </body>
 </html>
