@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🌌 Dark Notes — No Spoilers | Private Note Taker</title>
+  <title>🌀 Dark Chronicle — Table Notes | No Spoilers</title>
   <style>
     * {
       margin: 0;
@@ -12,138 +12,68 @@
     }
 
     body {
-      background: linear-gradient(145deg, #0b0e14 0%, #0f121a 100%);
-      font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', 'SF Pro Text', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #0a0c14 0%, #0f111a 100%);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      padding: 2rem 1.5rem;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem 1rem;
     }
 
-    /* main container — subtle triquetra / dark vibe */
-    .notebook {
-      max-width: 1000px;
-      width: 100%;
-      background: rgba(18, 22, 32, 0.85);
-      backdrop-filter: blur(2px);
-      border-radius: 2.5rem;
-      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(97, 218, 251, 0.1);
-      overflow: hidden;
-      transition: all 0.2s ease;
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
-    /* header — atmospheric, no spoilers */
+    /* header */
     .header {
-      padding: 1.5rem 2rem;
-      background: rgba(8, 12, 18, 0.7);
-      border-bottom: 1px solid rgba(72, 187, 200, 0.3);
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: flex-end;
+      flex-wrap: wrap;
       gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid rgba(44, 125, 160, 0.4);
     }
 
-    .title-area h1 {
-      font-size: 1.9rem;
+    .title h1 {
+      font-size: 2rem;
       font-weight: 600;
-      background: linear-gradient(135deg, #e0f2fe, #7dd3fc, #2c7da0);
+      background: linear-gradient(120deg, #c0e0ff, #5dade2);
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
       letter-spacing: -0.3px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .title-area h1 span {
-      font-size: 1.8rem;
-    }
-
-    .spoiler-badge {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      padding: 0.3rem 1rem;
-      border-radius: 60px;
-      font-size: 0.75rem;
+    .spoiler-tag {
+      background: #1a1f2c;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
       font-weight: 500;
-      color: #9ab3c7;
-      border-left: 2px solid #2c7da0;
-      display: inline-block;
-      margin-top: 8px;
+      color: #8ba5c2;
+      width: fit-content;
+      border-left: 2px solid #f5a623;
     }
 
-    .spoiler-badge i {
-      font-style: normal;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .note-stats {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 60px;
-      padding: 0.4rem 1.2rem;
-      font-size: 0.85rem;
-      font-weight: 450;
-      color: #cbd5e6;
+    .stats-panel {
+      background: #0e121c;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
       font-family: monospace;
-      letter-spacing: 0.3px;
-    }
-
-    /* caution strip — gentle reminder */
-    .caution {
-      background: #11161f;
-      border-left: 4px solid #f5a623;
-      padding: 0.7rem 2rem;
       font-size: 0.8rem;
-      color: #b9c7d9;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
+      color: #9ab3d0;
     }
 
-    .caution .shield {
-      font-size: 1.2rem;
-    }
-
-    /* editor area */
-    .editor-area {
-      padding: 1.8rem 2rem 2rem 2rem;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 380px;
-      background: #0b0f16;
-      border: 1px solid #2a3342;
-      border-radius: 1.5rem;
-      padding: 1.4rem 1.6rem;
-      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-      font-size: 1rem;
-      line-height: 1.6;
-      color: #eef4ff;
-      resize: vertical;
-      outline: none;
-      transition: all 0.2s;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-    }
-
-    textarea:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59,130,246,0.2), inset 0 1px 2px rgba(0,0,0,0.3);
-    }
-
-    /* button panel */
-    .action-bar {
+    /* toolbar */
+    .toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 1.5rem;
-      margin-bottom: 1rem;
+      margin: 1.5rem 0 1.2rem;
       justify-content: space-between;
       align-items: center;
     }
@@ -156,366 +86,586 @@
 
     .btn {
       background: #1e293b;
-      border: none;
-      padding: 0.6rem 1.2rem;
+      border: 1px solid #2d3e54;
+      padding: 0.5rem 1.2rem;
       border-radius: 2rem;
       font-weight: 500;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.15s;
+      color: #e2e8f0;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      cursor: pointer;
-      transition: 0.15s linear;
-      color: #e2e8f0;
-      border: 1px solid #2d3a4e;
     }
 
     .btn-primary {
       background: #1f4a6e;
       border-color: #2c7da0;
       color: white;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
     .btn-primary:hover {
-      background: #2c6288;
+      background: #2a628b;
       transform: translateY(-1px);
     }
 
     .btn-outline {
       background: transparent;
-      border: 1px solid #3a4a62;
+      border-color: #3a4c66;
     }
 
     .btn-outline:hover {
-      background: #1e2a3a;
-      border-color: #5f7f9e;
+      background: #1f2a3a;
     }
 
-    .btn-warning {
-      background: #2c1a1a;
-      border-color: #b91c1c;
-      color: #ffb3b3;
+    .btn-danger {
+      background: #2c1a1f;
+      border-color: #aa3e3e;
     }
 
-    .btn-warning:hover {
-      background: #4a1e1e;
+    .btn-danger:hover {
+      background: #441e26;
     }
 
-    .save-indicator {
-      font-size: 0.75rem;
-      background: #0f1219;
-      padding: 0.4rem 1rem;
-      border-radius: 2rem;
-      color: #94a3b8;
+    /* table wrapper (responsive) */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 1.5rem;
+      background: #0b0f17;
+      border: 1px solid #202635;
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .notes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 680px;
+    }
+
+    .notes-table th {
+      text-align: left;
+      padding: 1rem 1rem;
+      background: #10141f;
+      color: #bdd4ff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #2a3243;
+    }
+
+    .notes-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid #1a1f2b;
+      vertical-align: top;
+      color: #eef3ff;
+      background-color: #0c101a;
+    }
+
+    .notes-table tr:hover td {
+      background-color: #121724;
+    }
+
+    .category-badge {
+      background: #1f3a4b;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      display: inline-block;
+      color: #b8defa;
+    }
+
+    .edit-btn, .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin: 0 4px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      transition: 0.1s;
+    }
+
+    .edit-btn { color: #6c9fd1; }
+    .edit-btn:hover { background: #1e3349; transform: scale(1.05);}
+    .delete-btn { color: #c97a7a; }
+    .delete-btn:hover { background: #2e1e24; transform: scale(1.05);}
+
+    .empty-row td {
+      text-align: center;
+      padding: 2.5rem;
+      color: #6f7c93;
+      font-style: italic;
+    }
+
+    /* form card */
+    .form-card {
+      background: #0e121f;
+      border-radius: 1.2rem;
+      padding: 1.3rem 1.5rem;
+      margin-top: 1.8rem;
+      border: 1px solid #252e3f;
+      transition: all 0.2s;
+    }
+
+    .form-title {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .form-title h3 {
+      color: #d6e6ff;
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+    .form-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .input-group {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8aa1c2;
+      margin-bottom: 5px;
+    }
+
+    .input-group input, .input-group select, .input-group textarea {
+      width: 100%;
+      background: #06090f;
+      border: 1px solid #2a3346;
+      padding: 0.6rem 0.8rem;
+      border-radius: 1rem;
+      color: white;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .input-group textarea {
+      resize: vertical;
       font-family: monospace;
     }
 
-    hr {
-      margin: 1rem 0 0.5rem;
-      border-color: #1f2a36;
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+      border-color: #3b82f6;
     }
 
-    /* footer note: safe, no-spoiler zone */
-    .footer-note {
-      padding: 1rem 2rem 1.5rem;
-      font-size: 0.75rem;
-      color: #6a7c8f;
+    .submit-btn {
+      background: #2c6288;
+      border: none;
+      padding: 0.6rem 1.6rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      margin-top: 1.2rem;
+    }
+
+    .cancel-btn {
+      background: #232b38;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      color: #cdd9f4;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .footer-meta {
+      margin-top: 1.8rem;
       text-align: center;
-      border-top: 1px solid #1a232f;
-      background: rgba(0, 0, 0, 0.2);
+      font-size: 0.7rem;
+      color: #54657e;
+      border-top: 1px solid #1a212e;
+      padding-top: 1.2rem;
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 1rem;
     }
 
-    .safeguard {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    a {
-      color: #7aa9c4;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 600px) {
-      .header {
-        flex-direction: column;
-      }
-      .editor-area {
-        padding: 1rem;
-      }
-      .btn-group button {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-      }
-      textarea {
-        min-height: 280px;
-      }
+    @media (max-width: 720px) {
+      body { padding: 1rem; }
+      .form-grid { flex-direction: column; align-items: stretch; }
+      .submit-btn { width: 100%; margin-top: 0.5rem; }
     }
   </style>
 </head>
 <body>
-
-<div class="notebook">
+<div class="container">
   <div class="header">
-    <div class="title-area">
-      <h1>
-        <span>🌀</span> DARK • personal log
-      </h1>
-      <div class="spoiler-badge">
-        <i>🛡️ ZERO SPOILER ZONE — write freely, reflect safely</i>
-      </div>
+    <div class="title">
+      <h1>⌇ DARK : TIMELINE NOTES ⌇</h1>
+      <div class="spoiler-tag">🔒 NO SPOILER ZONE — structured table journal</div>
     </div>
-    <div class="note-stats" id="statsDisplay">
-      📝 0 characters · 0 lines
-    </div>
+    <div class="stats-panel" id="globalStats">📊 0 entries</div>
   </div>
 
-  <div class="caution">
-    <div class="shield">⚠️</div>
-    <div>
-      <strong>No-spoiler note space</strong> — Everything you write stays in your browser.
-      Use this as a private journal for theories, character reflections, or episode reactions.
-      Nothing is uploaded or shared.
+  <div class="toolbar">
+    <div class="btn-group">
+      <button class="btn btn-outline" id="exportTableBtn">⬇️ Export CSV</button>
+      <button class="btn btn-outline" id="importTriggerBtn">📂 Import CSV</button>
+      <input type="file" id="importFileInput" accept=".csv" style="display: none;">
+      <button class="btn btn-danger" id="clearAllTableBtn">🗑️ Clear all entries</button>
     </div>
+    <div class="stats-panel" style="background:#0a0e16;">✍️ Add / edit notes about characters, mysteries, episodes</div>
   </div>
 
-  <div class="editor-area">
-    <textarea id="darkNotesArea" placeholder="✍️  Write about DARK without worrying about spoilers...&#10;&#10;Examples:&#10;• 'The opening cave imagery gives me chills — reminds me of the knot symbolism.'&#10;• 'Why does Noah feel both ominous and tragic? Need to track his appearances.'&#10;• 'Episode 3: the way light flickers across the timeline, feels like a loop.'&#10;• 'My theory about the origin world — keep this between seasons.'&#10;&#10;🔒 Local storage auto-saves every few seconds. Your notes, your rules."></textarea>
+  <!-- TABLE SECTION -->
+  <div class="table-wrapper">
+    <table class="notes-table" id="notesTable">
+      <thead>
+        <tr>
+          <th>📌 Category</th>
+          <th>🔖 Topic / Element</th>
+          <th>📝 Note (no spoilers, reflections)</th>
+          <th>⚙️ Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr class="empty-row"><td colspan="4">✨ No entries yet. Use the form below to add your Dark observations (theories, character arcs, visual motifs, episode notes).</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="action-bar">
-      <div class="btn-group">
-        <button class="btn btn-primary" id="saveNowBtn">
-          💾 Save & lock notes
-        </button>
-        <button class="btn btn-outline" id="copyNotesBtn">
-          📋 Copy to clipboard
-        </button>
-        <button class="btn btn-outline" id="exportTxtBtn">
-          ⬇️ Export as .txt
-        </button>
-        <button class="btn btn-warning" id="clearAllBtn">
-          🧹 Clear all notes
-        </button>
+  <!-- FORM: add / edit entry -->
+  <div class="form-card" id="formCard">
+    <div class="form-title">
+      <h3 id="formHeading">➕ Add new note (table entry)</h3>
+      <span style="font-size:0.7rem; color:#5b789b;">Everything stored locally in your browser</span>
+    </div>
+    <div class="form-grid">
+      <div class="input-group">
+        <label>Category</label>
+        <select id="categorySelect">
+          <option value="🧩 Theory">🧩 Theory</option>
+          <option value="👤 Character">👤 Character</option>
+          <option value="⏳ Episode">⏳ Episode</option>
+          <option value="🌌 Visual/Symbol">🌌 Visual/Symbol</option>
+          <option value="🕰️ Timeline clue">🕰️ Timeline clue</option>
+          <option value="📖 Quote">📖 Quote</option>
+        </select>
       </div>
-      <div class="save-indicator" id="saveIndicator">
-        ● All changes saved locally
+      <div class="input-group">
+        <label>Topic / Name</label>
+        <input type="text" id="topicInput" placeholder="e.g., 'Jonas', 'Cave passage', '33-year cycle'">
+      </div>
+      <div class="input-group" style="flex: 2;">
+        <label>Note (spoiler-free reflections)</label>
+        <textarea id="noteInput" rows="1" placeholder="Your thoughts, observations, theories without revealing plot twists..."></textarea>
+      </div>
+      <div class="btn-group" style="align-self: center;">
+        <button class="submit-btn" id="submitEntryBtn">➕ Add / Update</button>
+        <button class="cancel-btn" id="cancelEditBtn" style="display: none;">Cancel</button>
       </div>
     </div>
   </div>
-
-  <div class="footer-note">
-    <div class="safeguard">
-      🌙 <strong>Dark inspired • no spoilers ever</strong> — this tool doesn't generate plot, no AI inference.
-      Just your raw thoughts.
-    </div>
-    <div>
-      🧩 data stays in <strong>localStorage</strong> | private & ephemeral
-    </div>
+  <div class="footer-meta">
+    <span>🌀 Data stays in localStorage — no server, no spoilers exposed. Perfect for tracking Dark's labyrinth.</span>
+    <span>⚡ Table format: sortable manually, exportable CSV</span>
   </div>
 </div>
 
 <script>
-  (function() {
-    // DOM elements
-    const textarea = document.getElementById('darkNotesArea');
-    const statsSpan = document.getElementById('statsDisplay');
-    const saveIndicator = document.getElementById('saveIndicator');
-    const saveBtn = document.getElementById('saveNowBtn');
-    const copyBtn = document.getElementById('copyNotesBtn');
-    const exportBtn = document.getElementById('exportTxtBtn');
-    const clearBtn = document.getElementById('clearAllBtn');
+  // ---------- DATA MODEL ----------
+  let entries = [];     // each entry: { id, category, topic, note }
+  let editModeId = null;
 
-    // Storage key
-    const STORAGE_KEY = 'dark_no_spoiler_notes';
+  // DOM elements
+  const tbody = document.getElementById('tableBody');
+  const categorySelect = document.getElementById('categorySelect');
+  const topicInput = document.getElementById('topicInput');
+  const noteInput = document.getElementById('noteInput');
+  const submitBtn = document.getElementById('submitEntryBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const formHeading = document.getElementById('formHeading');
+  const globalStatsSpan = document.getElementById('globalStats');
+  const exportBtn = document.getElementById('exportTableBtn');
+  const importTrigger = document.getElementById('importTriggerBtn');
+  const importFile = document.getElementById('importFileInput');
+  const clearAllBtn = document.getElementById('clearAllTableBtn');
 
-    // Helper: update stats (characters + lines)
-    function updateStats() {
-      const content = textarea.value;
-      const charCount = content.length;
-      const linesCount = content.split(/\r?\n/).filter(line => line.trim().length > 0 || line === "").length;
-      const effectiveLines = content === "" ? 0 : linesCount;
-      statsSpan.innerHTML = `📝 ${charCount} character${charCount !== 1 ? 's' : ''} · ${effectiveLines} line${effectiveLines !== 1 ? 's' : ''}`;
-    }
+  const STORAGE_KEY = 'dark_table_notes_nospoiler';
 
-    // Save current textarea content to localStorage with visual feedback
-    function saveToLocalStorage(showToastEffect = true) {
-      const currentContent = textarea.value;
-      localStorage.setItem(STORAGE_KEY, currentContent);
-      
-      if (showToastEffect) {
-        // subtle flash / indicator update
-        saveIndicator.innerHTML = '✓ Saved just now';
-        saveIndicator.style.opacity = '1';
-        setTimeout(() => {
-          if (saveIndicator.innerHTML === '✓ Saved just now') {
-            saveIndicator.innerHTML = '● All changes saved locally';
-          }
-        }, 1800);
-      } else {
-        saveIndicator.innerHTML = '● All changes saved locally';
-      }
-      updateStats();
-    }
-
-    // Load saved notes from localStorage on startup
-    function loadFromLocalStorage() {
-      const savedNotes = localStorage.getItem(STORAGE_KEY);
-      if (savedNotes !== null) {
-        textarea.value = savedNotes;
-      } else {
-        // optional default gentle placeholder (no spoilers, just ambiance)
-        textarea.value = '';
-      }
-      updateStats();
-      saveIndicator.innerHTML = '● All changes saved locally';
-    }
-
-    // Debounced auto-save while typing (every 1 second after user stops)
-    let autoSaveTimer;
-    function handleAutoSave() {
-      clearTimeout(autoSaveTimer);
-      autoSaveTimer = setTimeout(() => {
-        saveToLocalStorage(false);   // silent auto-save without overriding toast
-        updateStats();
-      }, 800);
-    }
-
-    // Event listeners for typing & changes
-    textarea.addEventListener('input', () => {
-      updateStats();
-      handleAutoSave();
-    });
-
-    // Manual save button
-    saveBtn.addEventListener('click', () => {
-      saveToLocalStorage(true);
-      // also provide a quick haptic feedback (no spoiler alert)
-      textarea.style.transition = '0.1s';
-      textarea.style.boxShadow = '0 0 0 2px #2c7da0';
-      setTimeout(() => {
-        textarea.style.boxShadow = '';
-      }, 200);
-    });
-
-    // Copy to clipboard (with plain text, no extra markup)
-    copyBtn.addEventListener('click', async () => {
-      const content = textarea.value;
-      if (!content.trim()) {
-        // gentle feedback
-        saveIndicator.innerHTML = '⚠️ Nothing to copy — notes are empty';
-        setTimeout(() => {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }, 1500);
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(content);
-        saveIndicator.innerHTML = '📋 Copied to clipboard!';
-        setTimeout(() => {
-          if (saveIndicator.innerHTML === '📋 Copied to clipboard!') {
-            saveIndicator.innerHTML = '● All changes saved locally';
-          }
-        }, 1800);
-      } catch (err) {
-        console.warn('Clipboard error:', err);
-        saveIndicator.innerHTML = '❌ Could not copy, select manually';
-        setTimeout(() => {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }, 1500);
-      }
-    });
-
-    // Export as .txt file (filename: Dark_Notes_YYYYMMDD_HHMMSS.txt)
-    exportBtn.addEventListener('click', () => {
-      const content = textarea.value;
-      if (!content.trim()) {
-        saveIndicator.innerHTML = '📄 No content to export — write something first';
-        setTimeout(() => {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }, 1500);
-        return;
-      }
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
-      const filename = `Dark_Notes_${timestamp}.txt`;
-      const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      saveIndicator.innerHTML = `⬇️ Exported as ${filename}`;
-      setTimeout(() => {
-        if (saveIndicator.innerHTML.includes('Exported')) {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }
-      }, 2200);
-    });
-
-    // Clear all notes with confirmation (to avoid accidental loss)
-    clearBtn.addEventListener('click', () => {
-      const currentLen = textarea.value.length;
-      if (currentLen === 0) {
-        saveIndicator.innerHTML = '✨ Notes already empty';
-        setTimeout(() => {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }, 1200);
-        return;
-      }
-      const userConfirmed = confirm('⚠️ Clear all Dark notes? This action is permanent (no undo). Your notes will be erased from browser storage.');
-      if (userConfirmed) {
-        textarea.value = '';
-        localStorage.removeItem(STORAGE_KEY);
-        updateStats();
-        saveIndicator.innerHTML = '🗑️ Notes cleared safely';
-        setTimeout(() => {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }, 1800);
-        // focus back to textarea for new thoughts
-        textarea.focus();
-      } else {
-        saveIndicator.innerHTML = '↺ Clear cancelled — notes untouched';
-        setTimeout(() => {
-          saveIndicator.innerHTML = '● All changes saved locally';
-        }, 1500);
-      }
-    });
-
-    // Extra safety: before page unload, ensure latest content is saved
-    window.addEventListener('beforeunload', () => {
-      // final sync: save whatever is in textarea (just in case)
-      const currentValue = textarea.value;
-      localStorage.setItem(STORAGE_KEY, currentValue);
-    });
-
-    // also listen for visibility change (save on tab hide)
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        localStorage.setItem(STORAGE_KEY, textarea.value);
-      }
-    });
-
-    // initialize: load data, set stats, focus optionally
-    loadFromLocalStorage();
-    textarea.focus();
-    
-    // Additional safeguard: if the user clicks away but we haven't saved in a while,
-    // we already auto-save on input. but let's add a click-outside safety? not needed
-    // update stats after load
+  // Helper: save to localStorage
+  function persistEntries() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    renderTable();
     updateStats();
-  })();
+  }
+
+  // update stats counter
+  function updateStats() {
+    const count = entries.length;
+    globalStatsSpan.innerText = `📊 ${count} entr${count === 1 ? 'y' : 'ies'}`;
+  }
+
+  // render table from entries array
+  function renderTable() {
+    if (!tbody) return;
+    if (entries.length === 0) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="4">🌀 No entries yet. Add your first Dark note — keep theories, character layers, or timeline observations spoiler-free.</td></tr>`;
+      return;
+    }
+
+    let html = '';
+    entries.forEach(entry => {
+      html += `
+        <tr data-id="${entry.id}">
+          <td><span class="category-badge">${escapeHtml(entry.category)}</span></td>
+          <td><strong>${escapeHtml(entry.topic)}</strong></td>
+          <td style="white-space: pre-wrap; word-break: break-word;">${escapeHtml(entry.note)}</td>
+          <td style="white-space: nowrap;">
+            <button class="edit-btn" data-id="${entry.id}" title="Edit entry">✏️</button>
+            <button class="delete-btn" data-id="${entry.id}" title="Delete entry">🗑️</button>
+          </td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+
+    // attach event listeners to edit/delete buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = parseInt(btn.getAttribute('data-id'));
+        startEditMode(id);
+      });
+    });
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = parseInt(btn.getAttribute('data-id'));
+        if (confirm('Delete this entry? (no spoilers lost, just this note)')) {
+          entries = entries.filter(entry => entry.id !== id);
+          if (editModeId === id) resetForm();
+          persistEntries();
+        }
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+
+  // add or update entry
+  function saveEntryFromForm() {
+    const category = categorySelect.value;
+    const topic = topicInput.value.trim();
+    const note = noteInput.value.trim();
+
+    if (!topic) {
+      alert('Please enter a Topic / Name (e.g., "Adam", "The Triquetra")');
+      return false;
+    }
+    if (!note) {
+      alert('Please write a small note (spoiler-free reflection)');
+      return false;
+    }
+
+    if (editModeId !== null) {
+      // update existing
+      const index = entries.findIndex(e => e.id === editModeId);
+      if (index !== -1) {
+        entries[index] = {
+          ...entries[index],
+          category: category,
+          topic: topic,
+          note: note
+        };
+      }
+      resetForm();
+      persistEntries();
+    } else {
+      // create new
+      const newId = Date.now();
+      const newEntry = {
+        id: newId,
+        category: category,
+        topic: topic,
+        note: note
+      };
+      entries.push(newEntry);
+      resetForm();
+      persistEntries();
+    }
+    return true;
+  }
+
+  function startEditMode(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+    editModeId = id;
+    categorySelect.value = entry.category;
+    topicInput.value = entry.topic;
+    noteInput.value = entry.note;
+    formHeading.innerText = '✏️ Edit existing note (table row)';
+    submitBtn.innerText = '✅ Update entry';
+    cancelEditBtn.style.display = 'inline-block';
+    // scroll to form
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetForm() {
+    editModeId = null;
+    categorySelect.value = '🧩 Theory';
+    topicInput.value = '';
+    noteInput.value = '';
+    formHeading.innerText = '➕ Add new note (table entry)';
+    submitBtn.innerText = '➕ Add / Update';
+    cancelEditBtn.style.display = 'none';
+  }
+
+  // export to CSV (no spoilers, just structured data)
+  function exportToCSV() {
+    if (entries.length === 0) {
+      alert('No entries to export. Add some Dark notes first.');
+      return;
+    }
+    const headers = ['Category', 'Topic', 'Note'];
+    const rows = entries.map(entry => [
+      entry.category,
+      entry.topic,
+      entry.note
+    ]);
+    const csvContent = [headers, ...rows].map(row => 
+      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+    
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', 'dark_notes_table.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // import CSV (overwrites current entries with confirm)
+  function importCSV(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const text = e.target.result;
+      const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
+      if (lines.length < 2) {
+        alert('CSV must contain header + at least one data row.');
+        return;
+      }
+      const newEntries = [];
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        let row = [];
+        let inQuote = false;
+        let current = '';
+        for (let ch of line) {
+          if (ch === '"') {
+            inQuote = !inQuote;
+          } else if (ch === ',' && !inQuote) {
+            row.push(current);
+            current = '';
+          } else {
+            current += ch;
+          }
+        }
+        row.push(current);
+        if (row.length >= 3) {
+          let category = row[0].replace(/^"|"$/g, '').trim();
+          let topic = row[1].replace(/^"|"$/g, '').trim();
+          let note = row[2].replace(/^"|"$/g, '').trim();
+          if (topic && note) {
+            newEntries.push({
+              id: Date.now() + i,
+              category: category || '🧩 Theory',
+              topic: topic,
+              note: note
+            });
+          }
+        }
+      }
+      if (newEntries.length === 0) {
+        alert('No valid entries found in CSV (need Category, Topic, Note).');
+        return;
+      }
+      if (confirm(`Import will replace all current notes with ${newEntries.length} entries from CSV. Proceed?`)) {
+        entries = newEntries;
+        persistEntries();
+        resetForm();
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  // clear all entries with confirmation
+  function clearAllEntries() {
+    if (entries.length === 0) return;
+    if (confirm('⚠️ PERMANENT: Delete ALL your Dark table notes? This action cannot be undone.')) {
+      entries = [];
+      persistEntries();
+      resetForm();
+    }
+  }
+
+  // load initial data from localStorage
+  function loadInitialData() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        entries = JSON.parse(stored);
+        if (!Array.isArray(entries)) entries = [];
+      } catch(e) { entries = []; }
+    } else {
+      // optional sample entries (no spoilers, just thematic examples)
+      entries = [
+        { id: 1700001, category: '👤 Character', topic: 'Jonas Kahnwald', note: 'Haunted by family legacy, yellow jacket stands out. Psychological depth.' },
+        { id: 1700002, category: '🌌 Visual/Symbol', topic: 'The Cave', note: 'Portal entrance, recurring motif of light/darkness. Ep 1 atmosphere.' },
+        { id: 1700003, category: '⏳ Timeline clue', topic: '33-year cycle', note: 'Important numeric pattern, worth tracking every season.' }
+      ];
+      persistEntries();
+    }
+    renderTable();
+    updateStats();
+  }
+
+  // event binding
+  submitBtn.addEventListener('click', () => { saveEntryFromForm(); });
+  cancelEditBtn.addEventListener('click', () => { resetForm(); });
+  exportBtn.addEventListener('click', exportToCSV);
+  importTrigger.addEventListener('click', () => { importFile.click(); });
+  importFile.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      importCSV(e.target.files[0]);
+      importFile.value = '';
+    }
+  });
+  clearAllBtn.addEventListener('click', clearAllEntries);
+
+  loadInitialData();
 </script>
 </body>
 </html>
