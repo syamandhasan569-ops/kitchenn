@@ -3,125 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dark Companion</title>
+    <title>Dark Tracker</title>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --panel: #1a1a1a;
-            --accent: #d4af37; /* Gold like the watch/emerald tablet */
-            --text: #e0e0e0;
+            --bg-color: #050505;
+            --surface-color: #121212;
+            --border-color: #333;
+            --accent-color: #c9a050; /* Subtle gold */
+            --text-main: #e0e0e0;
+            --text-muted: #888;
         }
+
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
         }
+
         header {
-            padding: 15px;
-            text-align: center;
-            background: var(--panel);
-            border-bottom: 2px solid var(--accent);
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .tabs {
-            display: flex;
-            background: #111;
-            overflow-x: auto;
-            border-bottom: 1px solid #333;
-        }
-        .tab {
-            padding: 12px 20px;
-            min-width: 80px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.8rem;
-            border-right: 1px solid #222;
-            white-space: nowrap;
-        }
-        .tab.active {
-            background: var(--panel);
-            color: var(--accent);
-            border-bottom: 2px solid var(--accent);
-        }
-        textarea {
-            flex-grow: 1;
-            padding: 20px;
-            background: transparent;
-            color: var(--text);
-            border: none;
-            outline: none;
-            font-size: 16px;
-            line-height: 1.6;
-            resize: none;
-        }
-        .footer {
-            padding: 8px 15px;
-            font-size: 0.7rem;
+            padding: 15px 20px;
+            background: linear-gradient(180deg, #1a1a1a 0%, var(--bg-color) 100%);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
-            background: var(--panel);
-            color: #666;
+            align-items: center;
         }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+        }
+
+        .status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Table Container for Mobile Scrolling */
+        .table-wrapper {
+            flex-grow: 1;
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px; /* Forces horizontal scroll on very small screens to keep structure */
+            border-collapse: collapse;
+            background-color: var(--surface-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #1a1a1a;
+            color: var(--accent-color);
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 0;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        /* Seamless Inputs inside Table Cells */
+        input, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 12px 15px;
+            font-size: 16px; /* Prevents iOS auto-zoom */
+            font-family: inherit;
+            outline: none;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            background-color: rgba(201, 160, 80, 0.05);
+        }
+
+        .btn-container {
+            padding: 15px;
+            text-align: center;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        button {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        /* Column widths */
+        .col-subject { width: 25%; }
+        .col-time { width: 20%; }
+        .col-notes { width: 55%; }
     </style>
 </head>
 <body>
 
-<header>Sic Mundus Creatus Est</header>
+    <header>
+        <h1>THE KNOT</h1>
+        <div class="status" id="saveStatus">All changes saved</div>
+    </header>
 
-<div class="tabs" id="tabContainer">
-    <div class="tab active" onclick="switchTab('General')">General</div>
-    <div class="tab" onclick="switchTab('Families')">Families</div>
-    <div class="tab" onclick="switchTab('Timelines')">Years</div>
-    <div class="tab" onclick="switchTab('Theories')">Theories</div>
-</div>
+    <div class="table-wrapper">
+        <table id="notesTable">
+            <thead>
+                <tr>
+                    <th class="col-subject">Subject / Name</th>
+                    <th class="col-time">Time Period</th>
+                    <th class="col-notes">Connections & Clues</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
 
-<textarea id="noteArea" placeholder="Everything is connected..."></textarea>
+    <div class="btn-container">
+        <button onclick="addNewRow()">+ Add New Entry</button>
+    </div>
 
-<div class="footer">
-    <span id="saveStatus">Saved</span>
-    <span>Dark Notebook v2.0</span>
-</div>
+    <script>
+        const tableBody = document.getElementById('tableBody');
+        const saveStatus = document.getElementById('saveStatus');
+        let saveTimeout;
 
-<script>
-    const noteArea = document.getElementById('noteArea');
-    const saveStatus = document.getElementById('saveStatus');
-    let currentTab = 'General';
+        // Load data from LocalStorage
+        function loadTable() {
+            const savedData = localStorage.getItem('dark_table_notes');
+            if (savedData) {
+                const rows = JSON.parse(savedData);
+                rows.forEach(row => createRowHTML(row.subject, row.time, row.notes));
+            } else {
+                // Create 3 empty rows by default for new users
+                for(let i=0; i<3; i++) createRowHTML('', '', '');
+            }
+        }
 
-    // Load initial data
-    function loadData() {
-        const savedData = localStorage.getItem('dark_notes_' + currentTab);
-        noteArea.value = savedData || "";
-    }
+        // Save entire table to LocalStorage
+        function saveTable() {
+            saveStatus.innerText = "Saving...";
+            clearTimeout(saveTimeout);
+            
+            const rows = [];
+            document.querySelectorAll('#tableBody tr').forEach(tr => {
+                const inputs = tr.querySelectorAll('.cell-input');
+                rows.push({
+                    subject: inputs[0].value,
+                    time: inputs[1].value,
+                    notes: inputs[2].value
+                });
+            });
 
-    function switchTab(tabName) {
-        // Save current before switching
-        localStorage.setItem('dark_notes_' + currentTab, noteArea.value);
-        
-        // Update UI
-        document.querySelectorAll('.tab').forEach(t => {
-            t.classList.remove('active');
-            if(t.innerText === tabName) t.classList.add('active');
-        });
+            localStorage.setItem('dark_table_notes', JSON.stringify(rows));
+            
+            saveTimeout = setTimeout(() => {
+                saveStatus.innerText = "All changes saved";
+            }, 500);
+        }
 
-        // Load new tab data
-        currentTab = tabName;
-        loadData();
-    }
+        // Generate HTML for a row
+        function createRowHTML(subjectVal, timeVal, notesVal) {
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `
+                <td><input type="text" class="cell-input" placeholder="e.g. Jonas" value="${subjectVal}"></td>
+                <td><input type="text" class="cell-input" placeholder="e.g. 2019" value="${timeVal}"></td>
+                <td><textarea class="cell-input" rows="2" placeholder="Notes...">${notesVal}</textarea></td>
+            `;
+            
+            // Add event listeners to new inputs so they auto-save when typed in
+            tr.querySelectorAll('.cell-input').forEach(input => {
+                input.addEventListener('input', saveTable);
+            });
 
-    noteArea.addEventListener('input', () => {
-        saveStatus.innerText = "Syncing...";
-        localStorage.setItem('dark_notes_' + currentTab, noteArea.value);
-        setTimeout(() => { saveStatus.innerText = "Saved"; }, 500);
-    });
+            tableBody.appendChild(tr);
+        }
 
-    loadData();
-</script>
+        // Button action
+        function addNewRow() {
+            createRowHTML('', '', '');
+            saveTable();
+            // Scroll to bottom
+            const wrapper = document.querySelector('.table-wrapper');
+            wrapper.scrollTop = wrapper.scrollHeight;
+        }
+
+        // Initialize
+        loadTable();
+    </script>
 
 </body>
 </html>
