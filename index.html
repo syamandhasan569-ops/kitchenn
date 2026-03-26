@@ -1,9 +1,11 @@
+Here is the enhanced HTML code with **Search/Filter Bar**, **Visual Timeline View**, and **Tags System** — all while preserving your existing entries.
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🌀 Dark Chronicle — Priority Reorder | No Spoilers</title>
+  <title>🌀 Dark Chronicle — Timeline + Tags + Search | Preserve Data</title>
   <style>
     * {
       margin: 0;
@@ -19,7 +21,7 @@
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1500px;
       margin: 0 auto;
     }
 
@@ -67,11 +69,88 @@
       color: #9ab3d0;
     }
 
+    /* search + timeline toggle bar */
+    .search-timeline-bar {
+      background: #0b0f18;
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0 1.2rem;
+      border: 1px solid #252e3f;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-group {
+      flex: 2;
+      min-width: 200px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-group input {
+      flex: 1;
+      background: #06090f;
+      border: 1px solid #2a3346;
+      padding: 0.6rem 1rem;
+      border-radius: 2rem;
+      color: white;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .search-group input:focus {
+      border-color: #3b82f6;
+    }
+
+    .filter-badge {
+      background: #1f3a4b;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .filter-badge.active {
+      background: #2c6288;
+      color: white;
+      border: 1px solid #5dade2;
+    }
+
+    .timeline-toggle {
+      display: flex;
+      gap: 8px;
+      background: #0e121c;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+    }
+
+    .timeline-btn {
+      background: #1e293b;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      color: #bdd4ff;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: 0.1s;
+    }
+
+    .timeline-btn.active {
+      background: #2c6288;
+      color: white;
+    }
+
     .toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin: 1.5rem 0 1.2rem;
+      margin: 0.5rem 0 1.2rem;
       justify-content: space-between;
       align-items: center;
     }
@@ -95,17 +174,6 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .btn-primary {
-      background: #1f4a6e;
-      border-color: #2c7da0;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #2a628b;
-      transform: translateY(-1px);
     }
 
     .btn-outline {
@@ -132,6 +200,7 @@
       background: #0b0f17;
       border: 1px solid #202635;
       box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
     }
 
     .notes-table {
@@ -175,11 +244,25 @@
       color: #b8defa;
     }
 
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .tag {
+      background: #2a1e3a;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.65rem;
+      color: #c4b5fd;
+    }
+
     .priority-controls {
       display: flex;
       gap: 6px;
       align-items: center;
-      justify-content: flex-start;
       flex-wrap: nowrap;
     }
 
@@ -190,18 +273,13 @@
       font-size: 1rem;
       padding: 5px 8px;
       border-radius: 8px;
-      transition: 0.1s;
       color: #8aa9cc;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       width: 32px;
     }
 
     .move-btn:hover:not(:disabled) {
       background: #2e405b;
       color: white;
-      transform: scale(1.05);
     }
 
     .move-btn:disabled {
@@ -227,13 +305,12 @@
       margin: 0 4px;
       padding: 4px 6px;
       border-radius: 8px;
-      transition: 0.1s;
     }
 
     .edit-btn { color: #6c9fd1; }
-    .edit-btn:hover { background: #1e3349; transform: scale(1.05);}
+    .edit-btn:hover { background: #1e3349; }
     .delete-btn { color: #c97a7a; }
-    .delete-btn:hover { background: #2e1e24; transform: scale(1.05);}
+    .delete-btn:hover { background: #2e1e24; }
 
     .empty-row td {
       text-align: center;
@@ -242,28 +319,64 @@
       font-style: italic;
     }
 
+    /* Timeline View */
+    .timeline-view {
+      background: #0b0f18;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      margin-top: 1rem;
+      border: 1px solid #252e3f;
+      display: none;
+    }
+
+    .timeline-view.active {
+      display: block;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .timeline-era {
+      flex: 1;
+      background: #0e121f;
+      border-radius: 1rem;
+      padding: 0.8rem;
+      border-left: 3px solid;
+    }
+
+    .timeline-era h4 {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .timeline-era ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .timeline-era li {
+      font-size: 0.75rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #1f2a36;
+      color: #b9ceff;
+    }
+
+    .timeline-era .timeline-topic {
+      font-weight: 600;
+      color: #ffd966;
+    }
+
     .form-card {
       background: #0e121f;
       border-radius: 1.2rem;
       padding: 1.3rem 1.5rem;
       margin-top: 1.8rem;
       border: 1px solid #252e3f;
-      transition: all 0.2s;
-    }
-
-    .form-title {
-      display: flex;
-      gap: 12px;
-      align-items: baseline;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .form-title h3 {
-      color: #d6e6ff;
-      font-weight: 500;
-      font-size: 1.1rem;
     }
 
     .form-grid {
@@ -282,7 +395,6 @@
       display: block;
       font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       color: #8aa1c2;
       margin-bottom: 5px;
     }
@@ -299,13 +411,38 @@
       outline: none;
     }
 
-    .input-group textarea {
-      resize: vertical;
-      font-family: monospace;
+    .tag-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
 
-    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-      border-color: #3b82f6;
+    .tag-input-row input {
+      flex: 1;
+    }
+
+    .add-tag-btn {
+      background: #1f3a4b;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      color: white;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .tag-list-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag-preview {
+      background: #2a1e3a;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
     }
 
     .submit-btn {
@@ -316,7 +453,6 @@
       font-weight: 600;
       color: white;
       cursor: pointer;
-      margin-top: 1.2rem;
     }
 
     .cancel-btn {
@@ -336,17 +472,11 @@
       color: #54657e;
       border-top: 1px solid #1a212e;
       padding-top: 1.2rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
     }
 
     @media (max-width: 720px) {
       body { padding: 1rem; }
-      .form-grid { flex-direction: column; align-items: stretch; }
-      .submit-btn { width: 100%; margin-top: 0.5rem; }
-      .priority-controls { flex-direction: column; align-items: flex-start; gap: 4px; }
-      .move-btn { width: 100%; }
+      .form-grid { flex-direction: column; }
     }
   </style>
 </head>
@@ -354,10 +484,22 @@
 <div class="container">
   <div class="header">
     <div class="title">
-      <h1>⌇ DARK : PRIORITY CHRONICLE ⌇</h1>
-      <div class="spoiler-tag">🔁 REORDER WITH ▲/▼ — Your existing data is preserved!</div>
+      <h1>⌇ DARK : TIMELINE & TAGS ⌇</h1>
+      <div class="spoiler-tag">🔍 Search | 🏷️ Tags | 📅 Timeline View | Your data preserved</div>
     </div>
     <div class="stats-panel" id="globalStats">📊 0 entries</div>
+  </div>
+
+  <!-- SEARCH + TIMELINE TOGGLE BAR -->
+  <div class="search-timeline-bar">
+    <div class="search-group">
+      <input type="text" id="searchInput" placeholder="🔍 Search by topic, note, tags, category..." autocomplete="off">
+      <span class="filter-badge" id="clearSearchBtn" style="background:#2c1f2a;">✖️ Clear</span>
+    </div>
+    <div class="timeline-toggle">
+      <button class="timeline-btn active" id="tableViewBtn">📋 Table View</button>
+      <button class="timeline-btn" id="timelineViewBtn">⏳ Timeline View</button>
+    </div>
   </div>
 
   <div class="toolbar">
@@ -365,236 +507,150 @@
       <button class="btn btn-outline" id="exportTableBtn">⬇️ Export CSV</button>
       <button class="btn btn-outline" id="importTriggerBtn">📂 Import CSV</button>
       <input type="file" id="importFileInput" accept=".csv" style="display: none;">
-      <button class="btn btn-danger" id="clearAllTableBtn">🗑️ Clear all entries</button>
+      <button class="btn btn-danger" id="clearAllTableBtn">🗑️ Clear all</button>
     </div>
-    <div class="stats-panel" style="background:#0a0e16;">⬆️⬇️ Use arrows to reorder priority (top = highest)</div>
+    <div class="stats-panel" style="background:#0a0e16;">🏷️ Add tags (e.g., Jonas, 1986, Cave) — filter by search</div>
   </div>
 
-  <div class="table-wrapper">
-    <table class="notes-table" id="notesTable">
+  <!-- TABLE VIEW -->
+  <div id="tableViewContainer" class="table-wrapper">
+    <table class="notes-table">
       <thead>
-        <tr>
-          <th style="width: 100px;">🎯 Priority</th>
-          <th>📌 Category</th>
-          <th>🔖 Topic / Element</th>
-          <th>📝 Note</th>
-          <th style="width: 110px;">⚙️ Actions</th>
-        </tr>
+        <tr><th style="width:100px;">🎯 Priority</th><th>📌 Category</th><th>🔖 Topic</th><th>📝 Note</th><th>🏷️ Tags</th><th>⚙️</th></tr>
       </thead>
-      <tbody id="tableBody">
-        <tr class="empty-row"><td colspan="5">🌀 Loading your saved entries...</td></tr>
-      </tbody>
+      <tbody id="tableBody"><tr class="empty-row"><td colspan="6">Loading...</td></tr>
     </table>
   </div>
 
-  <div class="form-card" id="formCard">
-    <div class="form-title">
-      <h3 id="formHeading">➕ Add new note</h3>
-      <span style="font-size:0.7rem; color:#5b789b;">New entries appear at bottom (lowest priority) — use arrows to reorder</span>
+  <!-- TIMELINE VIEW -->
+  <div id="timelineViewContainer" class="timeline-view">
+    <div class="timeline-header">
+      <div class="timeline-era" style="border-left-color: #c97e5a;"><h4>📜 1953</h4><ul id="timeline1953"></ul></div>
+      <div class="timeline-era" style="border-left-color: #5a9ec9;"><h4>⚛️ 1986</h4><ul id="timeline1986"></ul></div>
+      <div class="timeline-era" style="border-left-color: #6bc96b;"><h4>🌍 2019 / 2020</h4><ul id="timeline2019"></ul></div>
     </div>
+    <div style="margin-top: 12px; padding: 8px; background:#0a0e16; border-radius:12px;"><span style="color:#8aa9cc;">💡 Tip: Add tags like "1953", "1986", "2019" to auto-sort into timeline view.</span></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card">
+    <h3 id="formHeading" style="color:#d6e6ff; margin-bottom:1rem;">➕ Add / Edit Note</h3>
     <div class="form-grid">
-      <div class="input-group">
-        <label>Category</label>
-        <select id="categorySelect">
-          <option value="🧩 Theory">🧩 Theory</option>
-          <option value="👤 Character">👤 Character</option>
-          <option value="⏳ Episode">⏳ Episode</option>
-          <option value="🌌 Visual/Symbol">🌌 Visual/Symbol</option>
-          <option value="🕰️ Timeline clue">🕰️ Timeline clue</option>
-          <option value="📖 Quote">📖 Quote</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>Topic / Name</label>
-        <input type="text" id="topicInput" placeholder="e.g., 'Jonas', 'Cave passage', '33-year cycle'">
-      </div>
-      <div class="input-group" style="flex: 2;">
-        <label>Note</label>
-        <textarea id="noteInput" rows="1" placeholder="Your observations, theories, reflections..."></textarea>
-      </div>
-      <div class="btn-group" style="align-self: center;">
-        <button class="submit-btn" id="submitEntryBtn">➕ Add / Update</button>
-        <button class="cancel-btn" id="cancelEditBtn" style="display: none;">Cancel</button>
-      </div>
+      <div class="input-group"><label>Category</label><select id="categorySelect"><option value="🧩 Theory">🧩 Theory</option><option value="👤 Character">👤 Character</option><option value="⏳ Episode">⏳ Episode</option><option value="🌌 Visual/Symbol">🌌 Visual/Symbol</option><option value="🕰️ Timeline clue">🕰️ Timeline clue</option><option value="📖 Quote">📖 Quote</option></select></div>
+      <div class="input-group"><label>Topic</label><input type="text" id="topicInput" placeholder="e.g., Jonas, The Cave"></div>
+      <div class="input-group" style="flex:2;"><label>Note</label><textarea id="noteInput" rows="1" placeholder="Your reflections..."></textarea></div>
+      <div class="input-group"><label>Tags (comma or spaces)</label><div class="tag-input-row"><input type="text" id="tagsInput" placeholder="1986, Jonas, Cave, Time travel"><button type="button" class="add-tag-btn" id="addTagHelperBtn">➕</button></div><div class="tag-list-preview" id="tagPreview"></div></div>
+      <div><button class="submit-btn" id="submitEntryBtn">💾 Save</button><button class="cancel-btn" id="cancelEditBtn" style="display:none;">Cancel</button></div>
     </div>
   </div>
-  <div class="footer-meta">
-    <span>🌀 Your existing entries from the previous version are automatically preserved! Use ▲/▼ to reorder priorities.</span>
-    <span>⚡ Data stored in browser | Export/Import CSV available</span>
-  </div>
+  <div class="footer-meta"><span>🌀 Search works on topic, note, tags, category. Timeline view uses tags: 1953, 1986, 2019, etc. Your existing entries are fully preserved.</span></div>
 </div>
 
 <script>
-  // ============================================================
-  // IMPORTANT: Using the SAME localStorage key as your previous version
-  // This ensures ALL your existing entries are preserved automatically!
-  // Previous key was: 'dark_table_notes_nospoiler'
-  // ============================================================
   const STORAGE_KEY = 'dark_table_notes_nospoiler';
-  
   let entries = [];
   let editModeId = null;
+  let currentSearch = '';
+  let currentView = 'table'; // 'table' or 'timeline'
 
   // DOM elements
   const tbody = document.getElementById('tableBody');
   const categorySelect = document.getElementById('categorySelect');
   const topicInput = document.getElementById('topicInput');
   const noteInput = document.getElementById('noteInput');
+  const tagsInput = document.getElementById('tagsInput');
+  const tagPreview = document.getElementById('tagPreview');
   const submitBtn = document.getElementById('submitEntryBtn');
   const cancelEditBtn = document.getElementById('cancelEditBtn');
   const formHeading = document.getElementById('formHeading');
   const globalStatsSpan = document.getElementById('globalStats');
+  const searchInput = document.getElementById('searchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const tableViewBtn = document.getElementById('tableViewBtn');
+  const timelineViewBtn = document.getElementById('timelineViewBtn');
+  const tableViewContainer = document.getElementById('tableViewContainer');
+  const timelineViewContainer = document.getElementById('timelineViewContainer');
   const exportBtn = document.getElementById('exportTableBtn');
   const importTrigger = document.getElementById('importTriggerBtn');
   const importFile = document.getElementById('importFileInput');
   const clearAllBtn = document.getElementById('clearAllTableBtn');
 
-  function persistEntries() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    renderTable();
-    updateStats();
+  function persistEntries() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); renderCurrentView(); updateStats(); }
+  function updateStats() { const count = entries.length; globalStatsSpan.innerText = `📊 ${count} entr${count === 1 ? 'y' : 'ies'}`; }
+
+  function getTagsArray(entry) { return entry.tags && Array.isArray(entry.tags) ? entry.tags : (entry.tags ? entry.tags.split(',').map(t => t.trim()).filter(t=>t) : []); }
+  function updateTagPreview() { let raw = tagsInput.value; let tags = raw.split(/[ ,]+/).filter(t => t.trim()); tagPreview.innerHTML = tags.map(t => `<span class="tag-preview">🏷️ ${escapeHtml(t)}</span>`).join('') || '<span style="color:#5a6e8a;">no tags</span>'; }
+  tagsInput.addEventListener('input', updateTagPreview);
+  document.getElementById('addTagHelperBtn').addEventListener('click', () => { let v = tagsInput.value.trim(); if(v) tagsInput.value = v + (v.endsWith(',') ? '' : ', '); updateTagPreview(); });
+
+  function filterEntries() {
+    if (!currentSearch.trim()) return entries;
+    const search = currentSearch.toLowerCase();
+    return entries.filter(e => 
+      e.topic.toLowerCase().includes(search) || 
+      e.note.toLowerCase().includes(search) || 
+      e.category.toLowerCase().includes(search) ||
+      getTagsArray(e).some(tag => tag.toLowerCase().includes(search))
+    );
   }
 
-  function updateStats() {
-    const count = entries.length;
-    globalStatsSpan.innerText = `📊 ${count} entr${count === 1 ? 'y' : 'ies'}`;
-  }
-
-  // Priority movement: swap positions
-  function moveUp(index) {
-    if (index <= 0 || index >= entries.length) return false;
-    [entries[index], entries[index - 1]] = [entries[index - 1], entries[index]];
-    persistEntries();
-    return true;
-  }
-
-  function moveDown(index) {
-    if (index < 0 || index >= entries.length - 1) return false;
-    [entries[index], entries[index + 1]] = [entries[index + 1], entries[index]];
-    persistEntries();
-    return true;
-  }
-
-  function renderTable() {
-    if (!tbody) return;
-    
-    if (entries.length === 0) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">✨ No entries yet. Use the form below to add your Dark observations. Use ▲/▼ to reorder by priority!</td></tr>`;
-      return;
-    }
-
+  function renderTableView() {
+    const filtered = filterEntries();
+    if (filtered.length === 0) { tbody.innerHTML = `<tr class="empty-row"><td colspan="6">✨ No matching entries. Add notes or clear search.</td></tr>`; return; }
     let html = '';
-    entries.forEach((entry, idx) => {
-      const isFirst = idx === 0;
-      const isLast = idx === entries.length - 1;
-      const priorityNumber = idx + 1;
-      
-      html += `
-        <tr data-id="${entry.id}" data-index="${idx}">
-          <td style="vertical-align: middle;">
-            <div class="priority-controls">
-              <span class="priority-index">#${priorityNumber}</span>
-              <button class="move-btn move-up" data-index="${idx}" ${isFirst ? 'disabled' : ''} title="Move Up (higher priority)">▲</button>
-              <button class="move-btn move-down" data-index="${idx}" ${isLast ? 'disabled' : ''} title="Move Down (lower priority)">▼</button>
-            </div>
-          </td>
-          <td><span class="category-badge">${escapeHtml(entry.category)}</span></td>
-          <td><strong>${escapeHtml(entry.topic)}</strong></td>
-          <td style="white-space: pre-wrap; word-break: break-word;">${escapeHtml(entry.note)}</td>
-          <td style="white-space: nowrap;">
-            <button class="edit-btn" data-id="${entry.id}" title="Edit entry">✏️</button>
-            <button class="delete-btn" data-id="${entry.id}" title="Delete entry">🗑️</button>
-          </td>
-        </tr>
-      `;
+    filtered.forEach((entry, idx) => {
+      const originalIdx = entries.findIndex(e => e.id === entry.id);
+      const isFirst = originalIdx === 0, isLast = originalIdx === entries.length-1;
+      const tagsArr = getTagsArray(entry);
+      html += `<tr data-id="${entry.id}">
+        <td><div class="priority-controls"><span class="priority-index">#${originalIdx+1}</span><button class="move-up" data-idx="${originalIdx}" ${isFirst ? 'disabled' : ''}>▲</button><button class="move-down" data-idx="${originalIdx}" ${isLast ? 'disabled' : ''}>▼</button></div></td>
+        <td><span class="category-badge">${escapeHtml(entry.category)}</span></td>
+        <td><strong>${escapeHtml(entry.topic)}</strong></td>
+        <td style="white-space:pre-wrap;">${escapeHtml(entry.note)}</td>
+        <td><div class="tags-container">${tagsArr.map(t => `<span class="tag">🏷️ ${escapeHtml(t)}</span>`).join('') || '—'}</div></td>
+        <td><button class="edit-btn" data-id="${entry.id}">✏️</button><button class="delete-btn" data-id="${entry.id}">🗑️</button></td>
+      </tr>`;
     });
     tbody.innerHTML = html;
-
-    // Move up buttons
-    document.querySelectorAll('.move-up').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const idx = parseInt(btn.getAttribute('data-index'), 10);
-        moveUp(idx);
-      });
-    });
-    
-    // Move down buttons
-    document.querySelectorAll('.move-down').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const idx = parseInt(btn.getAttribute('data-index'), 10);
-        moveDown(idx);
-      });
-    });
-
-    // Edit buttons
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = parseInt(btn.getAttribute('data-id'), 10);
-        startEditMode(id);
-      });
-    });
-    
-    // Delete buttons
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = parseInt(btn.getAttribute('data-id'), 10);
-        if (confirm('Delete this entry?')) {
-          entries = entries.filter(entry => entry.id !== id);
-          if (editModeId === id) resetForm();
-          persistEntries();
-        }
-      });
-    });
+    document.querySelectorAll('.move-up').forEach(btn => { btn.addEventListener('click', (e) => { let idx = parseInt(btn.dataset.idx); if(idx>0) { [entries[idx-1], entries[idx]] = [entries[idx], entries[idx-1]]; persistEntries(); } }); });
+    document.querySelectorAll('.move-down').forEach(btn => { btn.addEventListener('click', (e) => { let idx = parseInt(btn.dataset.idx); if(idx<entries.length-1) { [entries[idx+1], entries[idx]] = [entries[idx], entries[idx+1]]; persistEntries(); } }); });
+    document.querySelectorAll('.edit-btn').forEach(btn => { btn.addEventListener('click', () => startEditMode(parseInt(btn.dataset.id))); });
+    document.querySelectorAll('.delete-btn').forEach(btn => { btn.addEventListener('click', () => { if(confirm('Delete entry?')) { entries = entries.filter(e => e.id !== parseInt(btn.dataset.id)); if(editModeId === parseInt(btn.dataset.id)) resetForm(); persistEntries(); } }); });
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
+  function renderTimelineView() {
+    const timeline = { '1953': [], '1986': [], '2019': [], 'other': [] };
+    entries.forEach(entry => {
+      const tags = getTagsArray(entry).map(t => t.toLowerCase());
+      let placed = false;
+      if (tags.includes('1953')) { timeline['1953'].push(entry); placed = true; }
+      if (tags.includes('1986')) { timeline['1986'].push(entry); placed = true; }
+      if (tags.includes('2019') || tags.includes('2020')) { timeline['2019'].push(entry); placed = true; }
+      if (!placed && (entry.note.toLowerCase().includes('1953') || entry.topic.toLowerCase().includes('1953'))) timeline['1953'].push(entry);
+      else if (!placed && (entry.note.toLowerCase().includes('1986') || entry.topic.toLowerCase().includes('1986'))) timeline['1986'].push(entry);
+      else if (!placed && (entry.note.toLowerCase().includes('2019') || entry.topic.toLowerCase().includes('2020'))) timeline['2019'].push(entry);
+      else if (!placed) timeline['other'].push(entry);
     });
+    document.getElementById('timeline1953').innerHTML = timeline['1953'].map(e => `<li><span class="timeline-topic">${escapeHtml(e.topic)}</span><br><span style="font-size:0.7rem;">${escapeHtml(e.note.substring(0,80))}${e.note.length>80?'…':''}</span><div style="font-size:0.65rem; color:#8aa9cc;">🏷️ ${getTagsArray(e).slice(0,3).join(', ') || '—'}</div></li>`).join('') || '<li>—</li>';
+    document.getElementById('timeline1986').innerHTML = timeline['1986'].map(e => `<li><span class="timeline-topic">${escapeHtml(e.topic)}</span><br><span style="font-size:0.7rem;">${escapeHtml(e.note.substring(0,80))}</span><div style="font-size:0.65rem;">🏷️ ${getTagsArray(e).slice(0,3).join(', ') || '—'}</div></li>`).join('') || '<li>—</li>';
+    document.getElementById('timeline2019').innerHTML = timeline['2019'].map(e => `<li><span class="timeline-topic">${escapeHtml(e.topic)}</span><br><span style="font-size:0.7rem;">${escapeHtml(e.note.substring(0,80))}</span><div style="font-size:0.65rem;">🏷️ ${getTagsArray(e).slice(0,3).join(', ') || '—'}</div></li>`).join('') || '<li>—</li>';
+    if(timeline['other'].length) { let otherDiv = document.querySelector('.timeline-header'); if(!document.getElementById('otherTimelineNote')) { let otherEl = document.createElement('div'); otherEl.className = 'timeline-era'; otherEl.id='otherTimelineNote'; otherEl.style.borderLeftColor='#8a6e9e'; otherEl.innerHTML = '<h4>🔮 Other / Untagged</h4><ul id="timelineOtherList"></ul>'; document.querySelector('.timeline-header').appendChild(otherEl); } document.getElementById('timelineOtherList').innerHTML = timeline['other'].map(e => `<li><span class="timeline-topic">${escapeHtml(e.topic)}</span><br><span style="font-size:0.7rem;">${escapeHtml(e.note.substring(0,80))}</span></li>`).join('') || '<li>—</li>'; }
   }
+
+  function renderCurrentView() { if(currentView === 'table') { tableViewContainer.style.display = 'block'; timelineViewContainer.classList.remove('active'); renderTableView(); } else { tableViewContainer.style.display = 'none'; timelineViewContainer.classList.add('active'); renderTimelineView(); } }
 
   function saveEntryFromForm() {
-    const category = categorySelect.value;
-    const topic = topicInput.value.trim();
-    const note = noteInput.value.trim();
-
-    if (!topic) {
-      alert('Please enter a Topic / Name');
-      return false;
-    }
-    if (!note) {
-      alert('Please write a note');
-      return false;
-    }
-
+    const category = categorySelect.value, topic = topicInput.value.trim(), note = noteInput.value.trim();
+    let rawTags = tagsInput.value;
+    let tags = rawTags.split(/[ ,]+/).filter(t => t.trim()).map(t => t.trim());
+    if (!topic || !note) { alert('Topic and Note required'); return false; }
     if (editModeId !== null) {
-      const index = entries.findIndex(e => e.id === editModeId);
-      if (index !== -1) {
-        entries[index] = {
-          ...entries[index],
-          category: category,
-          topic: topic,
-          note: note
-        };
-      }
-      resetForm();
-      persistEntries();
+      const idx = entries.findIndex(e => e.id === editModeId);
+      if (idx !== -1) entries[idx] = { ...entries[idx], category, topic, note, tags };
+      resetForm(); persistEntries();
     } else {
-      const newId = Date.now();
-      entries.push({
-        id: newId,
-        category: category,
-        topic: topic,
-        note: note
-      });
-      resetForm();
-      persistEntries();
+      entries.push({ id: Date.now(), category, topic, note, tags });
+      resetForm(); persistEntries();
     }
     return true;
   }
@@ -606,175 +662,35 @@
     categorySelect.value = entry.category;
     topicInput.value = entry.topic;
     noteInput.value = entry.note;
-    formHeading.innerText = '✏️ Edit existing note (keeps priority position)';
-    submitBtn.innerText = '✅ Update entry';
+    tagsInput.value = (entry.tags && Array.isArray(entry.tags)) ? entry.tags.join(', ') : (entry.tags || '');
+    updateTagPreview();
+    formHeading.innerText = '✏️ Edit Note';
+    submitBtn.innerText = '✅ Update';
     cancelEditBtn.style.display = 'inline-block';
-    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
   }
 
-  function resetForm() {
-    editModeId = null;
-    categorySelect.value = '🧩 Theory';
-    topicInput.value = '';
-    noteInput.value = '';
-    formHeading.innerText = '➕ Add new note';
-    submitBtn.innerText = '➕ Add / Update';
-    cancelEditBtn.style.display = 'none';
-  }
+  function resetForm() { editModeId = null; categorySelect.value = '🧩 Theory'; topicInput.value = ''; noteInput.value = ''; tagsInput.value = ''; updateTagPreview(); formHeading.innerText = '➕ Add New Note'; submitBtn.innerText = '💾 Save'; cancelEditBtn.style.display = 'none'; }
 
-  function exportToCSV() {
-    if (entries.length === 0) {
-      alert('No entries to export.');
-      return;
-    }
-    const headers = ['Priority', 'Category', 'Topic', 'Note'];
-    const rows = entries.map((entry, idx) => [
-      idx + 1,
-      entry.category,
-      entry.topic,
-      entry.note
-    ]);
-    const csvContent = [headers, ...rows].map(row => 
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    ).join('\n');
-    
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.href = url;
-    link.setAttribute('download', 'dark_priority_notes.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
+  function exportToCSV() { if(!entries.length) { alert('No entries'); return; } const headers = ['Priority','Category','Topic','Note','Tags']; const rows = entries.map((e,i)=>[i+1, e.category, e.topic, e.note, (e.tags||[]).join(';')]); const csv = [headers,...rows].map(row=>row.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n'); const blob = new Blob(["\uFEFF"+csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dark_notes.csv'; a.click(); URL.revokeObjectURL(a.href); }
+  function importCSV(file) { const reader = new FileReader(); reader.onload = function(e) { const lines = e.target.result.split(/\r?\n/).filter(l=>l.trim()); if(lines.length<2) { alert('Invalid CSV'); return; } const parse=(l)=>{ let row=[], inQ=false, cur=''; for(let ch of l){ if(ch==='"') inQ=!inQ; else if(ch===','&&!inQ){ row.push(cur); cur=''; } else cur+=ch; } row.push(cur); return row.map(c=>c.replace(/^"|"$/g,'').trim()); }; const headers=parse(lines[0]); const catIdx=headers.findIndex(h=>h.toLowerCase()==='category'), topicIdx=headers.findIndex(h=>h.toLowerCase()==='topic'), noteIdx=headers.findIndex(h=>h.toLowerCase()==='note'), tagsIdx=headers.findIndex(h=>h.toLowerCase()==='tags'); if(catIdx===-1||topicIdx===-1||noteIdx===-1){ alert('Need Category,Topic,Note columns'); return; } const newEntries=[]; for(let i=1;i<lines.length;i++){ const row=parse(lines[i]); if(row.length<=Math.max(catIdx,topicIdx,noteIdx)) continue; let tagsArr=[]; if(tagsIdx!==-1 && row[tagsIdx]) tagsArr=row[tagsIdx].split(';').map(t=>t.trim()).filter(t=>t); newEntries.push({ id:Date.now()+i, category:row[catIdx]||'🧩 Theory', topic:row[topicIdx]||'', note:row[noteIdx]||'', tags:tagsArr }); } if(newEntries.length && confirm(`Import ${newEntries.length} entries?`)) { entries=newEntries; persistEntries(); resetForm(); } }; reader.readAsText(file,'UTF-8'); }
 
-  function importCSV(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const text = e.target.result;
-      const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
-      if (lines.length < 2) {
-        alert('CSV must contain header + data rows.');
-        return;
-      }
-      
-      const parseCSVLine = (line) => {
-        let row = [];
-        let inQuote = false;
-        let current = '';
-        for (let ch of line) {
-          if (ch === '"') {
-            inQuote = !inQuote;
-          } else if (ch === ',' && !inQuote) {
-            row.push(current);
-            current = '';
-          } else {
-            current += ch;
-          }
-        }
-        row.push(current);
-        return row.map(cell => cell.replace(/^"|"$/g, '').trim());
-      };
-      
-      const headers = parseCSVLine(lines[0]);
-      const priorityIdx = headers.findIndex(h => h.toLowerCase() === 'priority');
-      const catIdx = headers.findIndex(h => h.toLowerCase() === 'category');
-      const topicIdx = headers.findIndex(h => h.toLowerCase() === 'topic');
-      const noteIdx = headers.findIndex(h => h.toLowerCase() === 'note');
-      
-      if (catIdx === -1 || topicIdx === -1 || noteIdx === -1) {
-        alert('CSV must contain Category, Topic, Note columns.');
-        return;
-      }
-      
-      const newEntries = [];
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCSVLine(lines[i]);
-        if (row.length <= Math.max(catIdx, topicIdx, noteIdx)) continue;
-        let category = row[catIdx] || '🧩 Theory';
-        let topic = row[topicIdx] || '';
-        let note = row[noteIdx] || '';
-        let priorityVal = (priorityIdx !== -1 && row[priorityIdx]) ? parseInt(row[priorityIdx], 10) : null;
-        
-        if (topic && note) {
-          newEntries.push({
-            id: Date.now() + i + Math.random(),
-            category: category,
-            topic: topic,
-            note: note,
-            priorityHint: priorityVal
-          });
-        }
-      }
-      
-      if (newEntries.length === 0) {
-        alert('No valid entries found.');
-        return;
-      }
-      
-      if (confirm(`Import will replace all current notes with ${newEntries.length} entries. Proceed?`)) {
-        const hasPriorityInfo = newEntries.some(e => e.priorityHint !== null && !isNaN(e.priorityHint));
-        if (hasPriorityInfo) {
-          newEntries.sort((a, b) => {
-            const pa = (a.priorityHint !== null && !isNaN(a.priorityHint)) ? a.priorityHint : 9999;
-            const pb = (b.priorityHint !== null && !isNaN(b.priorityHint)) ? b.priorityHint : 9999;
-            return pa - pb;
-          });
-        }
-        entries = newEntries.map(({ id, category, topic, note }) => ({ id, category, topic, note }));
-        persistEntries();
-        resetForm();
-      }
-    };
-    reader.readAsText(file, 'UTF-8');
-  }
+  function clearAllEntries() { if(entries.length && confirm('Delete ALL entries?')) { entries=[]; persistEntries(); resetForm(); } }
 
-  function clearAllEntries() {
-    if (entries.length === 0) return;
-    if (confirm('⚠️ PERMANENT: Delete ALL your Dark notes? This cannot be undone.')) {
-      entries = [];
-      persistEntries();
-      resetForm();
-    }
-  }
-
-  // Load data from localStorage using the SAME KEY as before
-  function loadInitialData() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        entries = JSON.parse(stored);
-        if (!Array.isArray(entries)) entries = [];
-      } catch(e) { 
-        entries = []; 
-      }
-    } else {
-      // Only add sample entries if absolutely nothing exists (first time user)
-      entries = [
-        { id: 1700001, category: '👤 Character', topic: 'Jonas Kahnwald', note: 'Haunted by family legacy, yellow jacket stands out. Psychological depth.' },
-        { id: 1700002, category: '🌌 Visual/Symbol', topic: 'The Cave', note: 'Portal entrance, recurring motif of light/darkness.' },
-        { id: 1700003, category: '⏳ Timeline clue', topic: '33-year cycle', note: 'Important numeric pattern, worth tracking.' }
-      ];
-      persistEntries();
-    }
-    renderTable();
-    updateStats();
-  }
-
-  submitBtn.addEventListener('click', () => { saveEntryFromForm(); });
-  cancelEditBtn.addEventListener('click', () => { resetForm(); });
+  searchInput.addEventListener('input', (e) => { currentSearch = e.target.value; renderCurrentView(); });
+  clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; currentSearch = ''; renderCurrentView(); });
+  tableViewBtn.addEventListener('click', () => { currentView='table'; tableViewBtn.classList.add('active'); timelineViewBtn.classList.remove('active'); renderCurrentView(); });
+  timelineViewBtn.addEventListener('click', () => { currentView='timeline'; timelineViewBtn.classList.add('active'); tableViewBtn.classList.remove('active'); renderCurrentView(); });
+  submitBtn.addEventListener('click', saveEntryFromForm);
+  cancelEditBtn.addEventListener('click', resetForm);
   exportBtn.addEventListener('click', exportToCSV);
-  importTrigger.addEventListener('click', () => { importFile.click(); });
-  importFile.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      importCSV(e.target.files[0]);
-      importFile.value = '';
-    }
-  });
+  importTrigger.addEventListener('click',()=>importFile.click());
+  importFile.addEventListener('change',(e)=>{ if(e.target.files[0]) importCSV(e.target.files[0]); importFile.value=''; });
   clearAllBtn.addEventListener('click', clearAllEntries);
 
+  function loadInitialData() { const stored = localStorage.getItem(STORAGE_KEY); if(stored) { try { entries = JSON.parse(stored); if(!Array.isArray(entries)) entries=[]; entries.forEach(e => { if(!e.tags) e.tags=[]; if(typeof e.tags === 'string') e.tags=e.tags.split(',').map(t=>t.trim()).filter(t=>t); }); } catch(e){ entries=[]; } } else { entries = [ { id:1700001, category:'👤 Character', topic:'Jonas Kahnwald', note:'Haunted by family legacy', tags:['Jonas','2019'] }, { id:1700002, category:'🌌 Visual/Symbol', topic:'The Cave', note:'Portal entrance', tags:['Cave','1986','2019'] }, { id:1700003, category:'⏳ Timeline clue', topic:'33-year cycle', note:'Important numeric pattern', tags:['1986','1953','2019'] } ]; persistEntries(); } renderCurrentView(); updateStats(); }
   loadInitialData();
 </script>
 </body>
 </html>
+```
