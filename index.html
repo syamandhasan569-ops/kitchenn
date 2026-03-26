@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🌀 Dark Chronicle — Timeline + Tags + Search | Preserve Data</title>
+  <title>🌀 Dark Chronicle — Season 1 Ep 1-5 Notes | Timeline + Tags + Search</title>
   <style>
     * {
       margin: 0;
@@ -113,10 +113,8 @@
       transition: 0.1s;
     }
 
-    .filter-badge.active {
+    .filter-badge:hover {
       background: #2c6288;
-      color: white;
-      border: 1px solid #5dade2;
     }
 
     .timeline-toggle {
@@ -189,6 +187,15 @@
 
     .btn-danger:hover {
       background: #441e26;
+    }
+
+    .btn-warning {
+      background: #5a4a1f;
+      border-color: #c9a53b;
+    }
+
+    .btn-warning:hover {
+      background: #7a622a;
     }
 
     .table-wrapper {
@@ -481,8 +488,8 @@
 <div class="container">
   <div class="header">
     <div class="title">
-      <h1>⌇ DARK : TIMELINE & TAGS ⌇</h1>
-      <div class="spoiler-tag">🔍 Search | 🏷️ Tags | 📅 Timeline View | ✅ Your data is SAFE</div>
+      <h1>⌇ DARK : SEASON 1 EP 1-5 ⌇</h1>
+      <div class="spoiler-tag">📺 Auto-populated with your episode notes | 🔍 Search | 🏷️ Tags | ⏳ Timeline</div>
     </div>
     <div class="stats-panel" id="globalStats">📊 0 entries</div>
   </div>
@@ -503,17 +510,18 @@
       <button class="btn btn-outline" id="exportTableBtn">⬇️ Export CSV</button>
       <button class="btn btn-outline" id="importTriggerBtn">📂 Import CSV</button>
       <input type="file" id="importFileInput" accept=".csv" style="display: none;">
+      <button class="btn btn-warning" id="resetToDefaultBtn">🔄 Reset to Episode Notes</button>
       <button class="btn btn-danger" id="clearAllTableBtn">🗑️ Clear all</button>
     </div>
-    <div class="stats-panel" style="background:#0a0e16;">🏷️ Add tags (e.g., Jonas, 1986, Cave) — filter by search | Timeline uses tags: 1953, 1986, 2019</div>
+    <div class="stats-panel" style="background:#0a0e16;">🏷️ Add tags like "1986", "Jonas", "Cave" | Timeline auto-groups by year tags</div>
   </div>
 
   <div id="tableViewContainer" class="table-wrapper">
     <table class="notes-table">
       <thead>
-        <tr><th style="width:100px;">🎯 Priority</th><th>📌 Category</th><th>🔖 Topic</th><th>📝 Note</th><th>🏷️ Tags</th><th>⚙️</th></tr>
+        <tr><th style="width:90px;">🎯 Priority</th><th>📌 Category</th><th>🔖 Topic</th><th>📝 Note</th><th>🏷️ Tags</th><th>⚙️</th></tr>
       </thead>
-      <tbody id="tableBody"><tr class="empty-row"><td colspan="6">Loading your saved entries...</td></tr>
+      <tbody id="tableBody"><tr class="empty-row"><td colspan="6">Loading your notes...</td></tr>
       </tbody>
     </table>
   </div>
@@ -522,9 +530,9 @@
     <div class="timeline-header">
       <div class="timeline-era" style="border-left-color: #c97e5a;"><h4>📜 1953</h4><ul id="timeline1953"></ul></div>
       <div class="timeline-era" style="border-left-color: #5a9ec9;"><h4>⚛️ 1986</h4><ul id="timeline1986"></ul></div>
-      <div class="timeline-era" style="border-left-color: #6bc96b;"><h4>🌍 2019 / 2020</h4><ul id="timeline2019"></ul></div>
+      <div class="timeline-era" style="border-left-color: #6bc96b;"><h4>🌍 2019</h4><ul id="timeline2019"></ul></div>
     </div>
-    <div style="margin-top: 12px; padding: 8px; background:#0a0e16; border-radius:12px;"><span style="color:#8aa9cc;">💡 Tip: Add tags like "1953", "1986", "2019" to auto-sort into timeline view.</span></div>
+    <div style="margin-top: 12px; padding: 8px; background:#0a0e16; border-radius:12px;"><span style="color:#8aa9cc;">💡 Timeline view uses tags: "1953", "1986", "2019" to sort entries.</span></div>
   </div>
 
   <div class="form-card">
@@ -533,15 +541,14 @@
       <div class="input-group"><label>Category</label><select id="categorySelect"><option value="🧩 Theory">🧩 Theory</option><option value="👤 Character">👤 Character</option><option value="⏳ Episode">⏳ Episode</option><option value="🌌 Visual/Symbol">🌌 Visual/Symbol</option><option value="🕰️ Timeline clue">🕰️ Timeline clue</option><option value="📖 Quote">📖 Quote</option></select></div>
       <div class="input-group"><label>Topic</label><input type="text" id="topicInput" placeholder="e.g., Jonas, The Cave"></div>
       <div class="input-group" style="flex:2;"><label>Note</label><textarea id="noteInput" rows="1" placeholder="Your reflections..."></textarea></div>
-      <div class="input-group"><label>Tags (comma or space separated)</label><div class="tag-input-row"><input type="text" id="tagsInput" placeholder="1986, Jonas, Cave, Time travel"><button type="button" class="add-tag-btn" id="addTagHelperBtn">➕</button></div><div class="tag-list-preview" id="tagPreview"></div></div>
+      <div class="input-group"><label>Tags (comma or space)</label><div class="tag-input-row"><input type="text" id="tagsInput" placeholder="1986, Jonas, Cave"><button type="button" class="add-tag-btn" id="addTagHelperBtn">➕</button></div><div class="tag-list-preview" id="tagPreview"></div></div>
       <div><button class="submit-btn" id="submitEntryBtn">💾 Save</button><button class="cancel-btn" id="cancelEditBtn" style="display:none;">Cancel</button></div>
     </div>
   </div>
-  <div class="footer-meta"><span>🌀 Your existing notes are preserved! Search works on everything. Timeline view groups by tags (1953/1986/2019).</span></div>
+  <div class="footer-meta"><span>🌀 Season 1 Episodes 1-5 notes auto-populated based on your viewing. Use priority arrows to reorder, search to filter, tags to organize!</span></div>
 </div>
 
 <script>
-  // CRITICAL: Using the SAME localStorage key as your original version
   const STORAGE_KEY = 'dark_table_notes_nospoiler';
   
   let entries = [];
@@ -549,26 +556,56 @@
   let currentSearch = '';
   let currentView = 'table';
 
-  const tbody = document.getElementById('tableBody');
-  const categorySelect = document.getElementById('categorySelect');
-  const topicInput = document.getElementById('topicInput');
-  const noteInput = document.getElementById('noteInput');
-  const tagsInput = document.getElementById('tagsInput');
-  const tagPreview = document.getElementById('tagPreview');
-  const submitBtn = document.getElementById('submitEntryBtn');
-  const cancelEditBtn = document.getElementById('cancelEditBtn');
-  const formHeading = document.getElementById('formHeading');
-  const globalStatsSpan = document.getElementById('globalStats');
-  const searchInput = document.getElementById('searchInput');
-  const clearSearchBtn = document.getElementById('clearSearchBtn');
-  const tableViewBtn = document.getElementById('tableViewBtn');
-  const timelineViewBtn = document.getElementById('timelineViewBtn');
-  const tableViewContainer = document.getElementById('tableViewContainer');
-  const timelineViewContainer = document.getElementById('timelineViewContainer');
-  const exportBtn = document.getElementById('exportTableBtn');
-  const importTrigger = document.getElementById('importTriggerBtn');
-  const importFile = document.getElementById('importFileInput');
-  const clearAllBtn = document.getElementById('clearAllTableBtn');
+  // ============================================================
+  // SEASON 1 EPISODES 1-5 - AUTO-POPULATED ENTRIES
+  // Based on the detailed recap from your viewing
+  // ============================================================
+  const DEFAULT_SEASON_1_ENTRIES = [
+    { id: 1001, category: '⏳ Episode', topic: 'Episode 1: "Secrets"', note: 'Mikkel Nielsen vanishes near the caves. Jonas dreams of his father Michael who committed suicide. The Stranger checks into the hotel.', tags: ['Episode 1', '2019', 'Mikkel', 'Jonas', 'Cave'] },
+    { id: 1002, category: '👤 Character', topic: 'Jonas Kahnwald', note: 'Protagonist whose father Michael killed himself 2 months before series start. Haunted by nightmares. His mother is Hannah.', tags: ['Jonas', '2019', 'Kahnwald'] },
+    { id: 1003, category: '👤 Character', topic: 'Mikkel Nielsen', note: 'Young boy who vanishes in the caves. Later revealed to have traveled back to 1986. Becomes Michael Kahnwald, Jonas\'s father.', tags: ['Mikkel', 'Nielsen', '2019', '1986', 'Key Mystery'] },
+    { id: 1004, category: '🕰️ Timeline clue', topic: 'The Stranger', note: 'Mysterious older man staying at the hotel. Knows about the time travel. Has a strange device. Later implied to be future Jonas.', tags: ['Stranger', 'Mystery', '2019', 'Time Travel'] },
+    { id: 1005, category: '⏳ Episode', topic: 'Episode 2: "Lies"', note: 'Erik Obendorf\'s body found with strange burns. Ulrich\'s affair with Hannah revealed. Stranger uses device near caves causing power outage.', tags: ['Episode 2', '2019', 'Erik', 'Ulrich', 'Hannah'] },
+    { id: 1006, category: '👤 Character', topic: 'Ulrich Nielsen', note: 'Police officer, father of Mikkel. Having affair with Hannah Kahnwald. Desperately searching for his missing son.', tags: ['Ulrich', 'Nielsen', '2019', 'Hannah'] },
+    { id: 1007, category: '👤 Character', topic: 'Hannah Kahnwald', note: 'Jonas\'s mother. Having affair with Ulrich. Manipulative and obsessive. In 1986, she had a crush on young Ulrich.', tags: ['Hannah', 'Kahnwald', '2019', '1986'] },
+    { id: 1008, category: '⏳ Episode', topic: 'Episode 3: "Past and Present"', note: 'Mikkel emerges from caves in 1986! He is found by police chief Egon Tiedemann. Introduction of 1986 timeline with younger versions of adults.', tags: ['Episode 3', '1986', 'Mikkel', 'Egon', 'Time Travel Confirmed'] },
+    { id: 1009, category: '👤 Character', topic: 'Egon Tiedemann', note: 'Police chief in 1986. Finds Mikkel after he travels from 2019. Father of Claudia Tiedemann.', tags: ['Egon', '1986', 'Police'] },
+    { id: 1010, category: '👤 Character', topic: 'Claudia Tiedemann', note: 'In 1986, she takes over the nuclear power plant. Becomes a key figure in time travel mystery. Regina\'s mother.', tags: ['Claudia', '1986', 'Nuclear Plant', 'Key Character'] },
+    { id: 1011, category: '⏳ Episode', topic: 'Episode 4: "Double Lives"', note: 'Elisabeth Doppler nearly abducted by Helge Doppler. Stranger tells Hannah: Michael Kahnwald WAS Mikkel Nielsen! Jonas is son of time-traveler.', tags: ['Episode 4', '2019', 'Helge', 'Elisabeth', 'Major Reveal'] },
+    { id: 1012, category: '🕰️ Timeline clue', topic: 'Michael = Mikkel Reveal', note: 'The Stranger reveals Michael Kahnwald is actually Mikkel Nielsen who traveled to 1986, grew up, and fathered Jonas. Jonas is product of time loop.', tags: ['Mikkel', 'Michael', 'Jonas', 'Time Loop', 'Major Reveal'] },
+    { id: 1013, category: '👤 Character', topic: 'Helge Doppler', note: 'Scarred man who abducts boys in 2019. In 1986, he is shown working with Noah. Connection to the bunker and time travel.', tags: ['Helge', '2019', '1986', 'Antagonist', 'Bunker'] },
+    { id: 1014, category: '👤 Character', topic: 'Elisabeth Doppler', note: 'Deaf daughter of Charlotte Doppler. Nearly abducted by Helge. Friend of Yasin who later disappears.', tags: ['Elisabeth', 'Doppler', '2019'] },
+    { id: 1015, category: '⏳ Episode', topic: 'Episode 5: "Truths"', note: 'Yasin vanishes. Noah recruits Bartosz. Young Hannah meets Mikkel in 1986 hospital. Stranger reveals himself to Jonas and gives him a box.', tags: ['Episode 5', '2019', '1986', 'Noah', 'Bartosz', 'Yasin'] },
+    { id: 1016, category: '👤 Character', topic: 'Noah', note: 'Mysterious priest operating from bunker. Orders Helge to abduct boys. Recruits Bartosz. Appears in 1986 and 2019.', tags: ['Noah', 'Antagonist', 'Priest', 'Bunker', '1986', '2019'] },
+    { id: 1017, category: '👤 Character', topic: 'Bartosz Tiedemann', note: 'Jonas\'s friend. In possession of Erik\'s drug phone. Recruited by Noah at end of Episode 5.', tags: ['Bartosz', 'Tiedemann', '2019', 'Noah'] },
+    { id: 1018, category: '🕰️ Timeline clue', topic: 'The Cave Passage', note: 'The caves connect 2019, 1986, and 1953. The Stranger wants to close the passage. Nuclear plant is connected to time travel.', tags: ['Cave', 'Time Travel', '1986', '2019', '1953'] },
+    { id: 1019, category: '🕰️ Timeline clue', topic: '33-Year Cycle', note: 'Events repeat every 33 years. The nuclear incident in 1986 connects to disappearances in 2019 and 1953.', tags: ['33 Years', 'Cycle', '1986', '2019', '1953'] },
+    { id: 1020, category: '👤 Character', topic: 'The Stranger = Future Jonas?', note: 'Stranger knows intimate details about Jonas. Leaves him a Geiger counter and box. He is trying to destroy the cave passage.', tags: ['Stranger', 'Jonas', 'Future', 'Theory'] }
+  ];
+
+  const DOM = {
+    tbody: document.getElementById('tableBody'),
+    categorySelect: document.getElementById('categorySelect'),
+    topicInput: document.getElementById('topicInput'),
+    noteInput: document.getElementById('noteInput'),
+    tagsInput: document.getElementById('tagsInput'),
+    tagPreview: document.getElementById('tagPreview'),
+    submitBtn: document.getElementById('submitEntryBtn'),
+    cancelEditBtn: document.getElementById('cancelEditBtn'),
+    formHeading: document.getElementById('formHeading'),
+    globalStatsSpan: document.getElementById('globalStats'),
+    searchInput: document.getElementById('searchInput'),
+    clearSearchBtn: document.getElementById('clearSearchBtn'),
+    tableViewBtn: document.getElementById('tableViewBtn'),
+    timelineViewBtn: document.getElementById('timelineViewBtn'),
+    tableViewContainer: document.getElementById('tableViewContainer'),
+    timelineViewContainer: document.getElementById('timelineViewContainer'),
+    exportBtn: document.getElementById('exportTableBtn'),
+    importTrigger: document.getElementById('importTriggerBtn'),
+    importFile: document.getElementById('importFileInput'),
+    clearAllBtn: document.getElementById('clearAllTableBtn'),
+    resetToDefaultBtn: document.getElementById('resetToDefaultBtn')
+  };
 
   function persistEntries() { 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
@@ -578,7 +615,7 @@
   
   function updateStats() { 
     const count = entries.length; 
-    globalStatsSpan.innerText = `📊 ${count} entr${count === 1 ? 'y' : 'ies'}`; 
+    DOM.globalStatsSpan.innerText = `📊 ${count} entr${count === 1 ? 'y' : 'ies'}`; 
   }
 
   function getTagsArray(entry) { 
@@ -589,15 +626,15 @@
   }
 
   function updateTagPreview() { 
-    let raw = tagsInput.value; 
+    let raw = DOM.tagsInput.value; 
     let tags = raw.split(/[ ,]+/).filter(t => t.trim()); 
-    tagPreview.innerHTML = tags.map(t => `<span class="tag-preview">🏷️ ${escapeHtml(t)}</span>`).join('') || '<span style="color:#5a6e8a;">no tags</span>'; 
+    DOM.tagPreview.innerHTML = tags.map(t => `<span class="tag-preview">🏷️ ${escapeHtml(t)}</span>`).join('') || '<span style="color:#5a6e8a;">no tags</span>'; 
   }
   
-  tagsInput.addEventListener('input', updateTagPreview);
+  DOM.tagsInput.addEventListener('input', updateTagPreview);
   document.getElementById('addTagHelperBtn').addEventListener('click', () => { 
-    let v = tagsInput.value.trim(); 
-    if(v) tagsInput.value = v + (v.endsWith(',') ? '' : ', '); 
+    let v = DOM.tagsInput.value.trim(); 
+    if(v) DOM.tagsInput.value = v + (v.endsWith(',') ? '' : ', '); 
     updateTagPreview(); 
   });
 
@@ -615,11 +652,11 @@
   function renderTableView() {
     const filtered = filterEntries();
     if (filtered.length === 0) { 
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="6">✨ No matching entries. Add notes or clear search.${currentSearch ? ' Try different keywords.' : ''}</td></tr>`; 
+      DOM.tbody.innerHTML = `<tr class="empty-row"><td colspan="6">✨ No matching entries. Add notes or clear search.${currentSearch ? ' Try different keywords.' : ''}</td></tr>`; 
       return; 
     }
     let html = '';
-    filtered.forEach((entry, idx) => {
+    filtered.forEach((entry) => {
       const originalIdx = entries.findIndex(e => e.id === entry.id);
       const isFirst = originalIdx === 0;
       const isLast = originalIdx === entries.length - 1;
@@ -633,7 +670,7 @@
         <td><button class="edit-btn" data-id="${entry.id}">✏️</button><button class="delete-btn" data-id="${entry.id}">🗑️</button></td>
       </tr>`;
     });
-    tbody.innerHTML = html;
+    DOM.tbody.innerHTML = html;
     
     document.querySelectorAll('.move-up').forEach(btn => { 
       btn.addEventListener('click', (e) => { 
@@ -686,132 +723,4 @@
   }
 
   function renderCurrentView() { 
-    if(currentView === 'table') { 
-      tableViewContainer.style.display = 'block'; 
-      timelineViewContainer.classList.remove('active'); 
-      renderTableView(); 
-    } else { 
-      tableViewContainer.style.display = 'none'; 
-      timelineViewContainer.classList.add('active'); 
-      renderTimelineView(); 
-    } 
-  }
-
-  function saveEntryFromForm() {
-    const category = categorySelect.value;
-    const topic = topicInput.value.trim();
-    const note = noteInput.value.trim();
-    let rawTags = tagsInput.value;
-    let tags = rawTags.split(/[ ,]+/).filter(t => t.trim()).map(t => t.trim());
-    
-    if (!topic || !note) { alert('Topic and Note are required'); return false; }
-    
-    if (editModeId !== null) {
-      const idx = entries.findIndex(e => e.id === editModeId);
-      if (idx !== -1) entries[idx] = { ...entries[idx], category, topic, note, tags };
-      resetForm(); 
-      persistEntries();
-    } else {
-      entries.push({ id: Date.now(), category, topic, note, tags });
-      resetForm(); 
-      persistEntries();
-    }
-    return true;
-  }
-
-  function startEditMode(id) {
-    const entry = entries.find(e => e.id === id);
-    if (!entry) return;
-    editModeId = id;
-    categorySelect.value = entry.category;
-    topicInput.value = entry.topic;
-    noteInput.value = entry.note;
-    tagsInput.value = (entry.tags && Array.isArray(entry.tags)) ? entry.tags.join(', ') : (entry.tags || '');
-    updateTagPreview();
-    formHeading.innerText = '✏️ Edit Note';
-    submitBtn.innerText = '✅ Update';
-    cancelEditBtn.style.display = 'inline-block';
-    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function resetForm() { 
-    editModeId = null; 
-    categorySelect.value = '🧩 Theory'; 
-    topicInput.value = ''; 
-    noteInput.value = ''; 
-    tagsInput.value = ''; 
-    updateTagPreview(); 
-    formHeading.innerText = '➕ Add New Note'; 
-    submitBtn.innerText = '💾 Save'; 
-    cancelEditBtn.style.display = 'none'; 
-  }
-
-  function exportToCSV() { 
-    if(!entries.length) { alert('No entries to export'); return; } 
-    const headers = ['Priority','Category','Topic','Note','Tags']; 
-    const rows = entries.map((e,i)=>[i+1, e.category, e.topic, e.note, (getTagsArray(e).join(';'))]); 
-    const csv = [headers,...rows].map(row=>row.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n'); 
-    const blob = new Blob(["\uFEFF"+csv],{type:'text/csv'}); 
-    const a=document.createElement('a'); 
-    a.href=URL.createObjectURL(blob); 
-    a.download='dark_notes.csv'; 
-    a.click(); 
-    URL.revokeObjectURL(a.href); 
-  }
-  
-  function importCSV(file) { 
-    const reader = new FileReader(); 
-    reader.onload = function(e) { 
-      const lines = e.target.result.split(/\r?\n/).filter(l=>l.trim()); 
-      if(lines.length<2) { alert('Invalid CSV'); return; } 
-      const parse=(l)=>{ let row=[], inQ=false, cur=''; for(let ch of l){ if(ch==='"') inQ=!inQ; else if(ch===','&&!inQ){ row.push(cur); cur=''; } else cur+=ch; } row.push(cur); return row.map(c=>c.replace(/^"|"$/g,'').trim()); }; 
-      const headers=parse(lines[0]); 
-      const catIdx=headers.findIndex(h=>h.toLowerCase()==='category'), topicIdx=headers.findIndex(h=>h.toLowerCase()==='topic'), noteIdx=headers.findIndex(h=>h.toLowerCase()==='note'), tagsIdx=headers.findIndex(h=>h.toLowerCase()==='tags'); 
-      if(catIdx===-1||topicIdx===-1||noteIdx===-1){ alert('Need Category,Topic,Note columns'); return; } 
-      const newEntries=[]; 
-      for(let i=1;i<lines.length;i++){ const row=parse(lines[i]); if(row.length<=Math.max(catIdx,topicIdx,noteIdx)) continue; let tagsArr=[]; if(tagsIdx!==-1 && row[tagsIdx]) tagsArr=row[tagsIdx].split(';').map(t=>t.trim()).filter(t=>t); newEntries.push({ id:Date.now()+i, category:row[catIdx]||'🧩 Theory', topic:row[topicIdx]||'', note:row[noteIdx]||'', tags:tagsArr }); } 
-      if(newEntries.length && confirm(`Import ${newEntries.length} entries? This will REPLACE all current notes.`)) { entries=newEntries; persistEntries(); resetForm(); } 
-    }; 
-    reader.readAsText(file,'UTF-8'); 
-  }
-
-  function clearAllEntries() { 
-    if(entries.length && confirm('⚠️ PERMANENT: Delete ALL your Dark notes? This cannot be undone.')) { 
-      entries=[]; 
-      persistEntries(); 
-      resetForm(); 
-    } 
-  }
-
-  searchInput.addEventListener('input', (e) => { currentSearch = e.target.value; renderCurrentView(); });
-  clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; currentSearch = ''; renderCurrentView(); });
-  tableViewBtn.addEventListener('click', () => { currentView='table'; tableViewBtn.classList.add('active'); timelineViewBtn.classList.remove('active'); renderCurrentView(); });
-  timelineViewBtn.addEventListener('click', () => { currentView='timeline'; timelineViewBtn.classList.add('active'); tableViewBtn.classList.remove('active'); renderCurrentView(); });
-  submitBtn.addEventListener('click', saveEntryFromForm);
-  cancelEditBtn.addEventListener('click', resetForm);
-  exportBtn.addEventListener('click', exportToCSV);
-  importTrigger.addEventListener('click',()=>importFile.click());
-  importFile.addEventListener('change',(e)=>{ if(e.target.files[0]) importCSV(e.target.files[0]); importFile.value=''; });
-  clearAllBtn.addEventListener('click', clearAllEntries);
-
-  function loadInitialData() { 
-    const stored = localStorage.getItem(STORAGE_KEY); 
-    if(stored) { 
-      try { 
-        entries = JSON.parse(stored); 
-        if(!Array.isArray(entries)) entries=[]; 
-        entries.forEach(e => { 
-          if(!e.tags) e.tags=[]; 
-          if(typeof e.tags === 'string') e.tags=e.tags.split(',').map(t=>t.trim()).filter(t=>t); 
-        }); 
-      } catch(e){ entries=[]; } 
-    } else { 
-      entries = [ 
-        { id:1700001, category:'👤 Character', topic:'Jonas Kahnwald', note:'Haunted by family legacy', tags:['Jonas','2019'] },
-        { id:1700002, category:'🌌 Visual/Symbol', topic:'The Cave', note:'Portal entrance', tags:['Cave','1986','2019'] },
-        { id:1700003, category:'⏳ Timeline clue', topic:'33-year cycle', note:'Important numeric pattern', tags:['1986','1953','2019'] }
-      ]; 
-      persistEntries(); 
-    } 
-    renderCurrentView(); 
-    updateStats();
+    if
