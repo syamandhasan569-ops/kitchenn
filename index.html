@@ -723,4 +723,153 @@
   }
 
   function renderCurrentView() { 
-    if
+    if(currentView === 'table') { 
+      DOM.tableViewContainer.style.display = 'block'; 
+      DOM.timelineViewContainer.classList.remove('active'); 
+      renderTableView(); 
+    } else { 
+      DOM.tableViewContainer.style.display = 'none'; 
+      DOM.timelineViewContainer.classList.add('active'); 
+      renderTimelineView(); 
+    } 
+  }
+
+  function saveEntryFromForm() {
+    const category = DOM.categorySelect.value;
+    const topic = DOM.topicInput.value.trim();
+    const note = DOM.noteInput.value.trim();
+    let rawTags = DOM.tagsInput.value;
+    let tags = rawTags.split(/[ ,]+/).filter(t => t.trim()).map(t => t.trim());
+    
+    if (!topic || !note) { alert('Topic and Note are required'); return false; }
+    
+    if (editModeId !== null) {
+      const idx = entries.findIndex(e => e.id === editModeId);
+      if (idx !== -1) entries[idx] = { ...entries[idx], category, topic, note, tags };
+      resetForm(); 
+      persistEntries();
+    } else {
+      entries.push({ id: Date.now(), category, topic, note, tags });
+      resetForm(); 
+      persistEntries();
+    }
+    return true;
+  }
+
+  function startEditMode(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+    editModeId = id;
+    DOM.categorySelect.value = entry.category;
+    DOM.topicInput.value = entry.topic;
+    DOM.noteInput.value = entry.note;
+    DOM.tagsInput.value = (entry.tags && Array.isArray(entry.tags)) ? entry.tags.join(', ') : (entry.tags || '');
+    updateTagPreview();
+    DOM.formHeading.innerText = '✏️ Edit Note';
+    DOM.submitBtn.innerText = '✅ Update';
+    DOM.cancelEditBtn.style.display = 'inline-block';
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function resetForm() { 
+    editModeId = null; 
+    DOM.categorySelect.value = '🧩 Theory'; 
+    DOM.topicInput.value = ''; 
+    DOM.noteInput.value = ''; 
+    DOM.tagsInput.value = ''; 
+    updateTagPreview(); 
+    DOM.formHeading.innerText = '➕ Add New Note'; 
+    DOM.submitBtn.innerText = '💾 Save'; 
+    DOM.cancelEditBtn.style.display = 'none'; 
+  }
+
+  function resetToDefaultEntries() {
+    if (confirm('⚠️ This will replace ALL current notes with the Season 1 Episodes 1-5 entries. Your current notes will be lost. Continue?')) {
+      entries = JSON.parse(JSON.stringify(DEFAULT_SEASON_1_ENTRIES));
+      persistEntries();
+      resetForm();
+    }
+  }
+
+  function exportToCSV() { 
+    if(!entries.length) { alert('No entries to export'); return; } 
+    const headers = ['Priority','Category','Topic','Note','Tags']; 
+    const rows = entries.map((e,i)=>[i+1, e.category, e.topic, e.note, (getTagsArray(e).join(';'))]); 
+    const csv = [headers,...rows].map(row=>row.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n'); 
+    const blob = new Blob(["\uFEFF"+csv],{type:'text/csv'}); 
+    const a=document.createElement('a'); 
+    a.href=URL.createObjectURL(blob); 
+    a.download='dark_notes.csv'; 
+    a.click(); 
+    URL.revokeObjectURL(a.href); 
+  }
+  
+  function importCSV(file) { 
+    const reader = new FileReader(); 
+    reader.onload = function(e) { 
+      const lines = e.target.result.split(/\r?\n/).filter(l=>l.trim()); 
+      if(lines.length<2) { alert('Invalid CSV'); return; } 
+      const parse=(l)=>{ let row=[], inQ=false, cur=''; for(let ch of l){ if(ch==='"') inQ=!inQ; else if(ch===','&&!inQ){ row.push(cur); cur=''; } else cur+=ch; } row.push(cur); return row.map(c=>c.replace(/^"|"$/g,'').trim()); }; 
+      const headers=parse(lines[0]); 
+      const catIdx=headers.findIndex(h=>h.toLowerCase()==='category'), topicIdx=headers.findIndex(h=>h.toLowerCase()==='topic'), noteIdx=headers.findIndex(h=>h.toLowerCase()==='note'), tagsIdx=headers.findIndex(h=>h.toLowerCase()==='tags'); 
+      if(catIdx===-1||topicIdx===-1||noteIdx===-1){ alert('Need Category,Topic,Note columns'); return; } 
+      const newEntries=[]; 
+      for(let i=1;i<lines.length;i++){ const row=parse(lines[i]); if(row.length<=Math.max(catIdx,topicIdx,noteIdx)) continue; let tagsArr=[]; if(tagsIdx!==-1 && row[tagsIdx]) tagsArr=row[tagsIdx].split(';').map(t=>t.trim()).filter(t=>t); newEntries.push({ id:Date.now()+i, category:row[catIdx]||'🧩 Theory', topic:row[topicIdx]||'', note:row[noteIdx]||'', tags:tagsArr }); } 
+      if(newEntries.length && confirm(`Import ${newEntries.length} entries? This will REPLACE all current notes.`)) { entries=newEntries; persistEntries(); resetForm(); } 
+    }; 
+    reader.readAsText(file,'UTF-8'); 
+  }
+
+  function clearAllEntries() { 
+    if(entries.length && confirm('⚠️ PERMANENT: Delete ALL your Dark notes? This cannot be undone.')) { 
+      entries=[]; 
+      persistEntries(); 
+      resetForm(); 
+    } 
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  DOM.searchInput.addEventListener('input', (e) => { currentSearch = e.target.value; renderCurrentView(); });
+  DOM.clearSearchBtn.addEventListener('click', () => { DOM.searchInput.value = ''; currentSearch = ''; renderCurrentView(); });
+  DOM.tableViewBtn.addEventListener('click', () => { currentView='table'; DOM.tableViewBtn.classList.add('active'); DOM.timelineViewBtn.classList.remove('active'); renderCurrentView(); });
+  DOM.timelineViewBtn.addEventListener('click', () => { currentView='timeline'; DOM.timelineViewBtn.classList.add('active'); DOM.tableViewBtn.classList.remove('active'); renderCurrentView(); });
+  DOM.submitBtn.addEventListener('click', saveEntryFromForm);
+  DOM.cancelEditBtn.addEventListener('click', resetForm);
+  DOM.exportBtn.addEventListener('click', exportToCSV);
+  DOM.importTrigger.addEventListener('click',()=>DOM.importFile.click());
+  DOM.importFile.addEventListener('change',(e)=>{ if(e.target.files[0]) importCSV(e.target.files[0]); DOM.importFile.value=''; });
+  DOM.clearAllBtn.addEventListener('click', clearAllEntries);
+  DOM.resetToDefaultBtn.addEventListener('click', resetToDefaultEntries);
+
+  function loadInitialData() { 
+    const stored = localStorage.getItem(STORAGE_KEY); 
+    if(stored && stored !== '[]') { 
+      try { 
+        entries = JSON.parse(stored); 
+        if(!Array.isArray(entries)) entries = []; 
+        entries.forEach(e => { 
+          if(!e.tags) e.tags=[]; 
+          if(typeof e.tags === 'string') e.tags=e.tags.split(',').map(t=>t.trim()).filter(t=>t); 
+        }); 
+      } catch(e){ entries = []; } 
+    } 
+    if (!entries || entries.length === 0) {
+      entries = JSON.parse(JSON.stringify(DEFAULT_SEASON_1_ENTRIES));
+    }
+    renderCurrentView(); 
+    updateStats(); 
+  }
+  
+  loadInitialData();
+</script>
+</body>
+</html>
