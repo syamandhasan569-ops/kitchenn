@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🌀 Dark Chronicle — Table Notes | No Spoilers</title>
+  <title>🌀 Dark Chronicle — Priority Reorder | No Spoilers</title>
   <style>
     * {
       margin: 0;
@@ -23,7 +23,6 @@
       margin: 0 auto;
     }
 
-    /* header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -68,7 +67,6 @@
       color: #9ab3d0;
     }
 
-    /* toolbar */
     .toolbar {
       display: flex;
       flex-wrap: wrap;
@@ -128,7 +126,6 @@
       background: #441e26;
     }
 
-    /* table wrapper (responsive) */
     .table-wrapper {
       overflow-x: auto;
       border-radius: 1.5rem;
@@ -141,7 +138,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
-      min-width: 680px;
+      min-width: 780px;
     }
 
     .notes-table th {
@@ -159,7 +156,7 @@
     .notes-table td {
       padding: 0.9rem 1rem;
       border-bottom: 1px solid #1a1f2b;
-      vertical-align: top;
+      vertical-align: middle;
       color: #eef3ff;
       background-color: #0c101a;
     }
@@ -176,6 +173,50 @@
       font-weight: 500;
       display: inline-block;
       color: #b8defa;
+    }
+
+    .priority-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+    }
+
+    .move-btn {
+      background: #1a2538;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 5px 8px;
+      border-radius: 8px;
+      transition: 0.1s;
+      color: #8aa9cc;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+    }
+
+    .move-btn:hover:not(:disabled) {
+      background: #2e405b;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .move-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .priority-index {
+      font-size: 0.7rem;
+      background: #0f1622;
+      padding: 2px 6px;
+      border-radius: 20px;
+      color: #7e95b5;
+      font-family: monospace;
+      margin-right: 6px;
     }
 
     .edit-btn, .delete-btn {
@@ -201,7 +242,6 @@
       font-style: italic;
     }
 
-    /* form card */
     .form-card {
       background: #0e121f;
       border-radius: 1.2rem;
@@ -305,6 +345,8 @@
       body { padding: 1rem; }
       .form-grid { flex-direction: column; align-items: stretch; }
       .submit-btn { width: 100%; margin-top: 0.5rem; }
+      .priority-controls { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .move-btn { width: 100%; }
     }
   </style>
 </head>
@@ -312,8 +354,8 @@
 <div class="container">
   <div class="header">
     <div class="title">
-      <h1>⌇ DARK : TIMELINE NOTES ⌇</h1>
-      <div class="spoiler-tag">🔒 NO SPOILER ZONE — structured table journal</div>
+      <h1>⌇ DARK : PRIORITY CHRONICLE ⌇</h1>
+      <div class="spoiler-tag">🔁 REORDER WITH ▲/▼ — Your existing data is preserved!</div>
     </div>
     <div class="stats-panel" id="globalStats">📊 0 entries</div>
   </div>
@@ -325,31 +367,30 @@
       <input type="file" id="importFileInput" accept=".csv" style="display: none;">
       <button class="btn btn-danger" id="clearAllTableBtn">🗑️ Clear all entries</button>
     </div>
-    <div class="stats-panel" style="background:#0a0e16;">✍️ Add / edit notes about characters, mysteries, episodes</div>
+    <div class="stats-panel" style="background:#0a0e16;">⬆️⬇️ Use arrows to reorder priority (top = highest)</div>
   </div>
 
-  <!-- TABLE SECTION -->
   <div class="table-wrapper">
     <table class="notes-table" id="notesTable">
       <thead>
         <tr>
+          <th style="width: 100px;">🎯 Priority</th>
           <th>📌 Category</th>
           <th>🔖 Topic / Element</th>
-          <th>📝 Note (no spoilers, reflections)</th>
-          <th>⚙️ Actions</th>
+          <th>📝 Note</th>
+          <th style="width: 110px;">⚙️ Actions</th>
         </tr>
       </thead>
       <tbody id="tableBody">
-        <tr class="empty-row"><td colspan="4">✨ No entries yet. Use the form below to add your Dark observations (theories, character arcs, visual motifs, episode notes).</td></tr>
+        <tr class="empty-row"><td colspan="5">🌀 Loading your saved entries...</td></tr>
       </tbody>
     </table>
   </div>
 
-  <!-- FORM: add / edit entry -->
   <div class="form-card" id="formCard">
     <div class="form-title">
-      <h3 id="formHeading">➕ Add new note (table entry)</h3>
-      <span style="font-size:0.7rem; color:#5b789b;">Everything stored locally in your browser</span>
+      <h3 id="formHeading">➕ Add new note</h3>
+      <span style="font-size:0.7rem; color:#5b789b;">New entries appear at bottom (lowest priority) — use arrows to reorder</span>
     </div>
     <div class="form-grid">
       <div class="input-group">
@@ -368,8 +409,8 @@
         <input type="text" id="topicInput" placeholder="e.g., 'Jonas', 'Cave passage', '33-year cycle'">
       </div>
       <div class="input-group" style="flex: 2;">
-        <label>Note (spoiler-free reflections)</label>
-        <textarea id="noteInput" rows="1" placeholder="Your thoughts, observations, theories without revealing plot twists..."></textarea>
+        <label>Note</label>
+        <textarea id="noteInput" rows="1" placeholder="Your observations, theories, reflections..."></textarea>
       </div>
       <div class="btn-group" style="align-self: center;">
         <button class="submit-btn" id="submitEntryBtn">➕ Add / Update</button>
@@ -378,14 +419,20 @@
     </div>
   </div>
   <div class="footer-meta">
-    <span>🌀 Data stays in localStorage — no server, no spoilers exposed. Perfect for tracking Dark's labyrinth.</span>
-    <span>⚡ Table format: sortable manually, exportable CSV</span>
+    <span>🌀 Your existing entries from the previous version are automatically preserved! Use ▲/▼ to reorder priorities.</span>
+    <span>⚡ Data stored in browser | Export/Import CSV available</span>
   </div>
 </div>
 
 <script>
-  // ---------- DATA MODEL ----------
-  let entries = [];     // each entry: { id, category, topic, note }
+  // ============================================================
+  // IMPORTANT: Using the SAME localStorage key as your previous version
+  // This ensures ALL your existing entries are preserved automatically!
+  // Previous key was: 'dark_table_notes_nospoiler'
+  // ============================================================
+  const STORAGE_KEY = 'dark_table_notes_nospoiler';
+  
+  let entries = [];
   let editModeId = null;
 
   // DOM elements
@@ -402,33 +449,55 @@
   const importFile = document.getElementById('importFileInput');
   const clearAllBtn = document.getElementById('clearAllTableBtn');
 
-  const STORAGE_KEY = 'dark_table_notes_nospoiler';
-
-  // Helper: save to localStorage
   function persistEntries() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     renderTable();
     updateStats();
   }
 
-  // update stats counter
   function updateStats() {
     const count = entries.length;
     globalStatsSpan.innerText = `📊 ${count} entr${count === 1 ? 'y' : 'ies'}`;
   }
 
-  // render table from entries array
+  // Priority movement: swap positions
+  function moveUp(index) {
+    if (index <= 0 || index >= entries.length) return false;
+    [entries[index], entries[index - 1]] = [entries[index - 1], entries[index]];
+    persistEntries();
+    return true;
+  }
+
+  function moveDown(index) {
+    if (index < 0 || index >= entries.length - 1) return false;
+    [entries[index], entries[index + 1]] = [entries[index + 1], entries[index]];
+    persistEntries();
+    return true;
+  }
+
   function renderTable() {
     if (!tbody) return;
+    
     if (entries.length === 0) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="4">🌀 No entries yet. Add your first Dark note — keep theories, character layers, or timeline observations spoiler-free.</td></tr>`;
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">✨ No entries yet. Use the form below to add your Dark observations. Use ▲/▼ to reorder by priority!</td></tr>`;
       return;
     }
 
     let html = '';
-    entries.forEach(entry => {
+    entries.forEach((entry, idx) => {
+      const isFirst = idx === 0;
+      const isLast = idx === entries.length - 1;
+      const priorityNumber = idx + 1;
+      
       html += `
-        <tr data-id="${entry.id}">
+        <tr data-id="${entry.id}" data-index="${idx}">
+          <td style="vertical-align: middle;">
+            <div class="priority-controls">
+              <span class="priority-index">#${priorityNumber}</span>
+              <button class="move-btn move-up" data-index="${idx}" ${isFirst ? 'disabled' : ''} title="Move Up (higher priority)">▲</button>
+              <button class="move-btn move-down" data-index="${idx}" ${isLast ? 'disabled' : ''} title="Move Down (lower priority)">▼</button>
+            </div>
+          </td>
           <td><span class="category-badge">${escapeHtml(entry.category)}</span></td>
           <td><strong>${escapeHtml(entry.topic)}</strong></td>
           <td style="white-space: pre-wrap; word-break: break-word;">${escapeHtml(entry.note)}</td>
@@ -441,17 +510,37 @@
     });
     tbody.innerHTML = html;
 
-    // attach event listeners to edit/delete buttons
-    document.querySelectorAll('.edit-btn').forEach(btn => {
+    // Move up buttons
+    document.querySelectorAll('.move-up').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const id = parseInt(btn.getAttribute('data-id'));
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        moveUp(idx);
+      });
+    });
+    
+    // Move down buttons
+    document.querySelectorAll('.move-down').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        moveDown(idx);
+      });
+    });
+
+    // Edit buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.getAttribute('data-id'), 10);
         startEditMode(id);
       });
     });
+    
+    // Delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = parseInt(btn.getAttribute('data-id'));
-        if (confirm('Delete this entry? (no spoilers lost, just this note)')) {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.getAttribute('data-id'), 10);
+        if (confirm('Delete this entry?')) {
           entries = entries.filter(entry => entry.id !== id);
           if (editModeId === id) resetForm();
           persistEntries();
@@ -467,28 +556,24 @@
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
       return m;
-    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-      return c;
     });
   }
 
-  // add or update entry
   function saveEntryFromForm() {
     const category = categorySelect.value;
     const topic = topicInput.value.trim();
     const note = noteInput.value.trim();
 
     if (!topic) {
-      alert('Please enter a Topic / Name (e.g., "Adam", "The Triquetra")');
+      alert('Please enter a Topic / Name');
       return false;
     }
     if (!note) {
-      alert('Please write a small note (spoiler-free reflection)');
+      alert('Please write a note');
       return false;
     }
 
     if (editModeId !== null) {
-      // update existing
       const index = entries.findIndex(e => e.id === editModeId);
       if (index !== -1) {
         entries[index] = {
@@ -501,15 +586,13 @@
       resetForm();
       persistEntries();
     } else {
-      // create new
       const newId = Date.now();
-      const newEntry = {
+      entries.push({
         id: newId,
         category: category,
         topic: topic,
         note: note
-      };
-      entries.push(newEntry);
+      });
       resetForm();
       persistEntries();
     }
@@ -523,10 +606,9 @@
     categorySelect.value = entry.category;
     topicInput.value = entry.topic;
     noteInput.value = entry.note;
-    formHeading.innerText = '✏️ Edit existing note (table row)';
+    formHeading.innerText = '✏️ Edit existing note (keeps priority position)';
     submitBtn.innerText = '✅ Update entry';
     cancelEditBtn.style.display = 'inline-block';
-    // scroll to form
     document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
@@ -535,19 +617,19 @@
     categorySelect.value = '🧩 Theory';
     topicInput.value = '';
     noteInput.value = '';
-    formHeading.innerText = '➕ Add new note (table entry)';
+    formHeading.innerText = '➕ Add new note';
     submitBtn.innerText = '➕ Add / Update';
     cancelEditBtn.style.display = 'none';
   }
 
-  // export to CSV (no spoilers, just structured data)
   function exportToCSV() {
     if (entries.length === 0) {
-      alert('No entries to export. Add some Dark notes first.');
+      alert('No entries to export.');
       return;
     }
-    const headers = ['Category', 'Topic', 'Note'];
-    const rows = entries.map(entry => [
+    const headers = ['Priority', 'Category', 'Topic', 'Note'];
+    const rows = entries.map((entry, idx) => [
+      idx + 1,
       entry.category,
       entry.topic,
       entry.note
@@ -560,26 +642,24 @@
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.href = url;
-    link.setAttribute('download', 'dark_notes_table.csv');
+    link.setAttribute('download', 'dark_priority_notes.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
 
-  // import CSV (overwrites current entries with confirm)
   function importCSV(file) {
     const reader = new FileReader();
     reader.onload = function(e) {
       const text = e.target.result;
       const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
       if (lines.length < 2) {
-        alert('CSV must contain header + at least one data row.');
+        alert('CSV must contain header + data rows.');
         return;
       }
-      const newEntries = [];
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
+      
+      const parseCSVLine = (line) => {
         let row = [];
         let inQuote = false;
         let current = '';
@@ -594,26 +674,55 @@
           }
         }
         row.push(current);
-        if (row.length >= 3) {
-          let category = row[0].replace(/^"|"$/g, '').trim();
-          let topic = row[1].replace(/^"|"$/g, '').trim();
-          let note = row[2].replace(/^"|"$/g, '').trim();
-          if (topic && note) {
-            newEntries.push({
-              id: Date.now() + i,
-              category: category || '🧩 Theory',
-              topic: topic,
-              note: note
-            });
-          }
-        }
-      }
-      if (newEntries.length === 0) {
-        alert('No valid entries found in CSV (need Category, Topic, Note).');
+        return row.map(cell => cell.replace(/^"|"$/g, '').trim());
+      };
+      
+      const headers = parseCSVLine(lines[0]);
+      const priorityIdx = headers.findIndex(h => h.toLowerCase() === 'priority');
+      const catIdx = headers.findIndex(h => h.toLowerCase() === 'category');
+      const topicIdx = headers.findIndex(h => h.toLowerCase() === 'topic');
+      const noteIdx = headers.findIndex(h => h.toLowerCase() === 'note');
+      
+      if (catIdx === -1 || topicIdx === -1 || noteIdx === -1) {
+        alert('CSV must contain Category, Topic, Note columns.');
         return;
       }
-      if (confirm(`Import will replace all current notes with ${newEntries.length} entries from CSV. Proceed?`)) {
-        entries = newEntries;
+      
+      const newEntries = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCSVLine(lines[i]);
+        if (row.length <= Math.max(catIdx, topicIdx, noteIdx)) continue;
+        let category = row[catIdx] || '🧩 Theory';
+        let topic = row[topicIdx] || '';
+        let note = row[noteIdx] || '';
+        let priorityVal = (priorityIdx !== -1 && row[priorityIdx]) ? parseInt(row[priorityIdx], 10) : null;
+        
+        if (topic && note) {
+          newEntries.push({
+            id: Date.now() + i + Math.random(),
+            category: category,
+            topic: topic,
+            note: note,
+            priorityHint: priorityVal
+          });
+        }
+      }
+      
+      if (newEntries.length === 0) {
+        alert('No valid entries found.');
+        return;
+      }
+      
+      if (confirm(`Import will replace all current notes with ${newEntries.length} entries. Proceed?`)) {
+        const hasPriorityInfo = newEntries.some(e => e.priorityHint !== null && !isNaN(e.priorityHint));
+        if (hasPriorityInfo) {
+          newEntries.sort((a, b) => {
+            const pa = (a.priorityHint !== null && !isNaN(a.priorityHint)) ? a.priorityHint : 9999;
+            const pb = (b.priorityHint !== null && !isNaN(b.priorityHint)) ? b.priorityHint : 9999;
+            return pa - pb;
+          });
+        }
+        entries = newEntries.map(({ id, category, topic, note }) => ({ id, category, topic, note }));
         persistEntries();
         resetForm();
       }
@@ -621,30 +730,31 @@
     reader.readAsText(file, 'UTF-8');
   }
 
-  // clear all entries with confirmation
   function clearAllEntries() {
     if (entries.length === 0) return;
-    if (confirm('⚠️ PERMANENT: Delete ALL your Dark table notes? This action cannot be undone.')) {
+    if (confirm('⚠️ PERMANENT: Delete ALL your Dark notes? This cannot be undone.')) {
       entries = [];
       persistEntries();
       resetForm();
     }
   }
 
-  // load initial data from localStorage
+  // Load data from localStorage using the SAME KEY as before
   function loadInitialData() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
         entries = JSON.parse(stored);
         if (!Array.isArray(entries)) entries = [];
-      } catch(e) { entries = []; }
+      } catch(e) { 
+        entries = []; 
+      }
     } else {
-      // optional sample entries (no spoilers, just thematic examples)
+      // Only add sample entries if absolutely nothing exists (first time user)
       entries = [
         { id: 1700001, category: '👤 Character', topic: 'Jonas Kahnwald', note: 'Haunted by family legacy, yellow jacket stands out. Psychological depth.' },
-        { id: 1700002, category: '🌌 Visual/Symbol', topic: 'The Cave', note: 'Portal entrance, recurring motif of light/darkness. Ep 1 atmosphere.' },
-        { id: 1700003, category: '⏳ Timeline clue', topic: '33-year cycle', note: 'Important numeric pattern, worth tracking every season.' }
+        { id: 1700002, category: '🌌 Visual/Symbol', topic: 'The Cave', note: 'Portal entrance, recurring motif of light/darkness.' },
+        { id: 1700003, category: '⏳ Timeline clue', topic: '33-year cycle', note: 'Important numeric pattern, worth tracking.' }
       ];
       persistEntries();
     }
@@ -652,7 +762,6 @@
     updateStats();
   }
 
-  // event binding
   submitBtn.addEventListener('click', () => { saveEntryFromForm(); });
   cancelEditBtn.addEventListener('click', () => { resetForm(); });
   exportBtn.addEventListener('click', exportToCSV);
